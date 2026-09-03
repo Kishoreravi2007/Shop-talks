@@ -70,9 +70,9 @@ export default function Footer({ talks, onResetDefaults, speakerProfile }) {
 
         <div className="footer-bottom">
           <div>
-            Crafted for engineers, speakers, and architects with{' '}
-            <span style={{ color: 'var(--accent-pink)' }}>♥</span> using{' '}
-            <strong style={{ color: '#ffffff' }}>Node & React</strong>
+            <span>© {new Date().getFullYear()} Shop-Talks. All Rights Reserved.</span>
+            <span style={{ margin: '0 0.5rem', color: 'rgba(255, 255, 255, 0.2)' }}>•</span>
+            <span>Built by <strong style={{ color: '#00f2fe' }}>Kishore Ravi</strong></span>
           </div>
 
           <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
@@ -80,7 +80,7 @@ export default function Footer({ talks, onResetDefaults, speakerProfile }) {
             <span>•</span>
             <span>Total Slides: {talks.reduce((acc, t) => acc + (t.slidesCount || t.slides?.length || 0), 0)}</span>
             <span>•</span>
-            <span>© {new Date().getFullYear()} Shop-Talks</span>
+            <span>Speaker Hub</span>
           </div>
         </div>
       </div>
