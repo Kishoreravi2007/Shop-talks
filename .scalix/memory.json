@@ -1,0 +1,22 @@
+{
+  "conventions": [
+    {
+      "key": "module_system",
+      "value": "ESM",
+      "source": "auto"
+    },
+    {
+      "key": "lint_command",
+      "value": "oxlint",
+      "source": "auto"
+    },
+    {
+      "key": "build_command",
+      "value": "vite build",
+      "source": "auto"
+    }
+  ],
+  "patterns": [],
+  "notes": [],
+  "lastUpdated": "2026-09-03T10:45:12.689Z"
+}

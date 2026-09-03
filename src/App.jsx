@@ -15,7 +15,7 @@ import './styles/app.css';
 import './styles/slide-viewer.css';
 import './styles/modals.css';
 
-const LOCAL_STORAGE_KEY = 'shoptalks_presentations_v7';
+const LOCAL_STORAGE_KEY = 'shoptalks_presentations_v8';
 
 export default function App() {
   const [talks, setTalks] = useState(() => {

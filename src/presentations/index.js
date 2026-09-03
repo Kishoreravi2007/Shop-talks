@@ -1,7 +1,9 @@
 import smartcamAi from './smartcam-ai';
+import iotSmartTechnology from './iot-smart-technology';
 
 export const INITIAL_PRESENTATIONS = [
-  smartcamAi
+  smartcamAi,
+  iotSmartTechnology
 ];
 
 export const SPEAKER_PROFILE = {
@@ -24,9 +26,9 @@ export const SPEAKER_PROFILE = {
     instagram: "https://www.instagram.com/kishore_warrier"
   },
   stats: {
-    talksCount: 1,
-    slidesDelivered: 10,
-    videoDemos: 4,
+    talksCount: 2,
+    slidesDelivered: 18,
+    videoDemos: 5,
     liveStatus: "Active"
   }
 };
