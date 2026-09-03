@@ -27,12 +27,12 @@ export const presentation = {
     "Direct shopfloor orchestration via MTConnect and OPC-UA protocols for real-time telemetry"
   ],
   prerequisites: "Interest in AI systems, computer vision, manufacturing automation, and physical computing.",
-  standaloneUrl: "/presentations/smartcam-ai/smartcam-ai-presentation.html",
+  standaloneUrl: "/presentations/smartcam-ai/",
   resources: {
     repoUrl: "https://github.com/example/SmartCAM-AI",
     recordingUrl: "/presentations/smartcam-ai/smartcam_demo_machining.mp4",
-    pdfUrl: "/presentations/smartcam-ai/smartcam-ai-presentation.html",
-    standalonePresentation: "/presentations/smartcam-ai/smartcam-ai-presentation.html"
+    pdfUrl: "/presentations/smartcam-ai/",
+    standalonePresentation: "/presentations/smartcam-ai/"
   },
   slides
 };
