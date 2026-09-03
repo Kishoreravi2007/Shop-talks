@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartCAM-AI — Next-Gen Autonomous CAM & Machining Intelligence</title>
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg-dark: #050811;
+      --bg-card: rgba(13, 22, 40, 0.75);
+      --bg-card-hover: rgba(20, 32, 58, 0.9);
+      --border-color: rgba(0, 242, 254, 0.18);
+      --border-glow: rgba(0, 242, 254, 0.5);
+      --cyan: #00f2fe;
+      --blue: #4facfe;
+      --emerald: #10b981;
+      --purple: #8b5cf6;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* Ambient Canvas Background */
+    #bg-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Layout Wrapper */
+    .app-container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* Top Navigation Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(5, 8, 17, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-size: 1.2rem;
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+    }
+
+    .brand-text h1 {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, #fff, var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-text p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .header-center {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.9rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      color: var(--emerald);
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--emerald);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+
+    .slide-indicator {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--cyan);
+      letter-spacing: 1px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-icon:hover {
+      background: rgba(0, 242, 254, 0.15);
+      border-color: var(--cyan);
+      color: var(--cyan);
+      transform: translateY(-2px);
+    }
+
+    /* Main Presentation Viewport */
+    main {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 2rem 3.5rem;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.96) translateY(20px);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+    }
+
+    .slide-header {
+      margin-bottom: 1.25rem;
+    }
+
+    .slide-category {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .slide-title {
+      font-family: var(--font-heading);
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .slide-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+      align-items: center;
+    }
+
+    /* Glass Cards */
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      border-color: var(--border-glow);
+      box-shadow: 0 15px 40px rgba(0, 242, 254, 0.15);
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: #fff;
+    }
+
+    .card-title i {
+      color: var(--cyan);
+    }
+
+    /* Bullet List Styling */
+    .bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .bullet-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+      padding: 0.75rem 0.9rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--cyan);
+      border-radius: 0 10px 10px 0;
+      transition: all 0.2s ease;
+    }
+
+    .bullet-item:hover {
+      background: rgba(0, 242, 254, 0.08);
+      transform: translateX(5px);
+    }
+
+    .bullet-icon {
+      color: var(--cyan);
+      font-size: 1rem;
+      margin-top: 0.1rem;
+    }
+
+    .bullet-text strong {
+      color: #fff;
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .bullet-text p {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+
+    /* Interactive Widgets */
+    .widget-container {
+      width: 100%;
+      height: 100%;
+      min-height: 360px;
+      background: rgba(8, 14, 28, 0.85);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .widget-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .widget-title {
+      font-family: var(--font-heading);
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-pill {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-pill:hover, .btn-pill.active {
+      background: var(--cyan);
+      color: #000;
+      border-color: var(--cyan);
+      box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+    }
+
+    /* Real Video Player Frame */
+    .real-video-card {
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .real-video-card video {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .video-tag-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--rose);
+      color: var(--rose);
+      padding: 0.2rem 0.6rem;
+      border-radius: 14px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      z-index: 10;
+    }
+
+    /* Bottom Navigation Bar */
+    footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 2.5rem;
+      background: rgba(5, 8, 17, 0.9);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border-color);
+      z-index: 100;
+    }
+
+    .progress-bar-container {
+      flex: 1;
+      max-width: 350px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 0 2rem;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 10%;
+      background: linear-gradient(to right, var(--blue), var(--cyan));
+      border-radius: 3px;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 10px var(--cyan);
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-nav {
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(79, 172, 254, 0.15));
+      border: 1px solid var(--border-color);
+      color: #fff;
+      padding: 0.55rem 1.3rem;
+      border-radius: 12px;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.25s ease;
+    }
+
+    .btn-nav:hover {
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      color: #000;
+      border-color: var(--cyan);
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn-nav:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Presenter Notes Overlay */
+    .presenter-notes-modal {
+      position: fixed;
+      bottom: 80px;
+      right: 2rem;
+      width: 360px;
+      background: rgba(10, 16, 30, 0.95);
+      border: 1px solid var(--cyan);
+      border-radius: 14px;
+      padding: 1.25rem;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      z-index: 200;
+      display: none;
+    }
+
+    .presenter-notes-modal.active {
+      display: block;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Slide Thumbnails Drawer Modal */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      padding: 3rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .grid-thumbnails {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .thumb-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 150px;
+    }
+
+    .thumb-card:hover, .thumb-card.active {
+      border-color: var(--cyan);
+      background: rgba(0, 242, 254, 0.12);
+      transform: translateY(-4px);
+    }
+
+    /* Range Sliders & Meters */
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .slider-val {
+      color: var(--cyan);
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--cyan);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--cyan);
+    }
+
+    .meter-bar {
+      height: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .meter-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--emerald), var(--amber), var(--rose));
+      border-radius: 5px;
+      transition: width 0.3s ease;
+    }
+
+    .code-box {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 0.85rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--cyan);
+      max-height: 160px;
+      overflow-y: auto;
+      line-height: 1.45;
+    }
+
+    canvas.interactive-canvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      background: #02040a;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Particle Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="app-container">
+    
+    <!-- Top Header -->
+    <header>
+      <div class="brand">
+        <div class="brand-logo">
+          <i class="fa-solid fa-microchip"></i>
+        </div>
+        <div class="brand-text">
+          <h1>SmartCAM-AI</h1>
+          <p>ShopTalk Presentation</p>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <div class="status-badge">
+          <div class="status-dot"></div>
+          <span>Autonomous Intelligence Active</span>
+        </div>
+        <div class="slide-indicator" id="slide-num-display">SLIDE 01 / 10</div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-icon" id="btn-toggle-notes" onclick="toggleNotes()" title="Presenter Notes (P)"><i class="fa-solid fa-sticky-note"></i></button>
+        <button class="btn-icon" id="btn-toggle-drawer" onclick="toggleDrawer()" title="Slide Overview (M)"><i class="fa-solid fa-border-all"></i></button>
+        <button class="btn-icon" id="btn-toggle-fullscreen" onclick="toggleFullscreen()" title="Fullscreen (F)"><i class="fa-solid fa-expand"></i></button>
+      </div>
+    </header>
+
+    <!-- Main Viewport -->
+    <main id="main-presentation">
+
+      <!-- SLIDE 1: Welcome & Title -->
+      <section class="slide active" id="slide-1">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-star"></i> Welcome to ShopTalk</div>
+          <h2 class="slide-title">SmartCAM-AI: Next-Gen Autonomous Machining</h2>
+          <p class="slide-subtitle">Transforming Engineering Drawings directly into Zero-Defect CNC Machine Operations</p>
+        </div>
+        
+        <div class="slide-body">
+          <div class="card" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+            <div style="margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between;">
+              <span style="background: rgba(0, 242, 254, 0.15); color: var(--cyan); border: 1px solid var(--cyan); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;">KEYNOTE TALK</span>
+              <div style="display: flex; align-items: center; gap: 0.6rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--cyan); padding: 0.3rem 0.9rem 0.3rem 0.4rem; border-radius: 24px; box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);">
+                <img src="kishore-photo.jpg" alt="Kishore Ravi" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; object-position: top; border: 2px solid var(--cyan); box-shadow: 0 0 10px rgba(0, 242, 254, 0.4);">
+                <span style="font-size: 0.85rem; color: #fff; font-weight: 800;">Presenter: Kishore Ravi</span>
+              </div>
+            </div>
+            
+            <h3 style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; line-height: 1.25; margin-bottom: 0.8rem; color: #fff;">
+              The Era of Hands-Free Precision Manufacturing
+            </h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">
+              Discover how AI computer vision, physics-informed cutting algorithms, predictive machine learning, and direct shopfloor control unite to automate precision machining without human error.
+            </p>
+
+            <div style="display: flex; gap: 0.75rem;">
+              <button class="btn-nav" onclick="nextSlide()"><i class="fa-solid fa-play"></i> Start ShopTalk</button>
+              <button class="btn-pill" style="padding: 0.6rem 1.2rem; font-size: 0.85rem;" onclick="toggleDrawer()"><i class="fa-solid fa-list"></i> Slide Drawer</button>
+            </div>
+          </div>
+
+          <!-- Real Video Demo Player Card -->
+          <div class="card" style="padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="font-family: var(--font-heading); font-size: 0.9rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-circle-play" style="color: var(--rose);"></i> SmartCAM-AI Live Design Demo
+              </div>
+              <span style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--cyan); background: rgba(0,242,254,0.1); padding: 0.2rem 0.5rem; border-radius: 10px;">4K UHD &bull; 60 FPS</span>
+            </div>
+
+            <div class="real-video-card">
+              <div class="video-tag-badge">
+                <span class="status-dot" style="background: var(--rose);"></span> LIVE APP CAPTURE
+              </div>
+              <video controls autoplay loop muted>
+                <source src="smartcam_demo_machining.mp4" type="video/mp4">
+                Your browser does not support HTML video.
+              </video>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; margin-top: 0.2rem;">
+              <div style="background: rgba(255,255,255,0.03); padding: 0.5rem; border-radius: 8px; text-align: center;">
+                <div style="font-size: 1.1rem; font-weight: 900; color: var(--cyan);">-85%</div>
+                <div style="font-size: 0.65rem; color: var(--text-muted);">Setup Time</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); padding: 0.5rem; border-radius: 8px; text-align: center;">
+                <div style="font-size: 1.1rem; font-weight: 900; color: var(--emerald);">0%</div>
+                <div style="font-size: 0.65rem; color: var(--text-muted);">Collisions</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); padding: 0.5rem; border-radius: 8px; text-align: center;">
+                <div style="font-size: 1.1rem; font-weight: 900; color: var(--amber);">2.5x</div>
+                <div style="font-size: 0.65rem; color: var(--text-muted);">Tool Life</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 2: Bottleneck & Solution -->
+      <section class="slide" id="slide-2">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-chart-line"></i> Industry Challenges</div>
+          <h2 class="slide-title">The CNC Programming Bottleneck</h2>
+          <p class="slide-subtitle">Bridging the gap between 2D engineering drawings and machine-ready execution</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-triangle-exclamation" style="color: var(--rose);"></i> Traditional CAM Overhead</h3>
+            <ul class="bullet-list">
+              <li class="bullet-item" style="border-left-color: var(--rose);">
+                <i class="fa-solid fa-clock bullet-icon" style="color: var(--rose);"></i>
+                <div class="bullet-text">
+                  <strong>Hours of Manual Setup</strong>
+                  <p>Engineers manually interpret blueprints, select tools, and calculate cutting parameters for every single part.</p>
+                </div>
+              </li>
+              <li class="bullet-item" style="border-left-color: var(--rose);">
+                <i class="fa-solid fa-user-gear bullet-icon" style="color: var(--rose);"></i>
+                <div class="bullet-text">
+                  <strong>Human Errors & Scrap Rate</strong>
+                  <p>Mistakes in depth-of-cut or feed calculations lead to tool breakage, scrapped parts, and costly spindle crashes.</p>
+                </div>
+              </li>
+              <li class="bullet-item" style="border-left-color: var(--rose);">
+                <i class="fa-solid fa-sliders bullet-icon" style="color: var(--rose);"></i>
+                <div class="bullet-text">
+                  <strong>Dry-Run Verification Bottleneck</strong>
+                  <p>Operators spend extensive shopfloor time performing slow air-cuts to visually verify tool movements.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="widget-container">
+            <div class="widget-header">
+              <div class="widget-title"><i class="fa-solid fa-calculator"></i> Interactive Savings Calculator</div>
+              <span class="btn-pill active" id="calc-badge">SmartCAM Impact</span>
+            </div>
+            
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-around;">
+              <div class="slider-group">
+                <div class="slider-label">
+                  <span>Part Geometry Complexity</span>
+                  <span class="slider-val" id="complexity-val">High (Gear / Aerospace)</span>
+                </div>
+                <input type="range" id="complexity-slider" min="1" max="5" value="4" oninput="updateCalculator()">
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                <div style="background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.3); padding: 1rem; border-radius: 12px; text-align: center;">
+                  <span style="font-size: 0.7rem; color: var(--rose); font-weight: 700; text-transform: uppercase;">Manual CAM Time</span>
+                  <div id="manual-time" style="font-family: var(--font-heading); font-size: 2rem; font-weight: 900; color: #fff; margin-top: 0.2rem;">4.5 hrs</div>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1rem; border-radius: 12px; text-align: center;">
+                  <span style="font-size: 0.7rem; color: var(--emerald); font-weight: 700; text-transform: uppercase;">SmartCAM-AI Time</span>
+                  <div id="smart-time" style="font-family: var(--font-heading); font-size: 2rem; font-weight: 900; color: var(--cyan); margin-top: 0.2rem;">35 sec</div>
+                </div>
+              </div>
+
+              <div style="background: rgba(0, 242, 254, 0.08); padding: 0.85rem; border-radius: 10px; border: 1px solid var(--border-color); margin-top: 0.5rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; color: #fff; margin-bottom: 0.3rem;">
+                  <span>Efficiency Gain</span>
+                  <span id="efficiency-percent" style="color: var(--cyan);">99.7% Faster</span>
+                </div>
+                <div class="meter-bar">
+                  <div class="meter-fill" id="efficiency-fill" style="width: 98%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 3: System Architecture -->
+      <section class="slide" id="slide-3">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-cubes"></i> Core Intelligence</div>
+          <h2 class="slide-title">End-to-End System Intelligence</h2>
+          <p class="slide-subtitle">A multi-layered ecosystem connecting vision, physics, machine learning, and hardware</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="card" style="display: flex; flex-direction: column; gap: 0.65rem;">
+            <div class="bullet-item" onclick="selectArchNode(0)" id="arch-btn-0" style="cursor: pointer; background: rgba(0, 242, 254, 0.12);">
+              <i class="fa-solid fa-eye bullet-icon"></i>
+              <div class="bullet-text">
+                <strong>1. Visual Drawing Intelligence</strong>
+                <p>Analyzes engineering blueprints to extract shape callouts and tolerances.</p>
+              </div>
+            </div>
+
+            <div class="bullet-item" onclick="selectArchNode(1)" id="arch-btn-1" style="cursor: pointer;">
+              <i class="fa-solid fa-cube bullet-icon"></i>
+              <div class="bullet-text">
+                <strong>2. Parametric Geometry Construction</strong>
+                <p>Reconstructs 3D solid models directly from extracted dimensions.</p>
+              </div>
+            </div>
+
+            <div class="bullet-item" onclick="selectArchNode(2)" id="arch-btn-2" style="cursor: pointer;">
+              <i class="fa-solid fa-atom bullet-icon"></i>
+              <div class="bullet-text">
+                <strong>3. Physics-Aware Machining Calculator</strong>
+                <p>Computes exact feeds, speeds, cutting forces, and canned cycle toolpaths.</p>
+              </div>
+            </div>
+
+            <div class="bullet-item" onclick="selectArchNode(3)" id="arch-btn-3" style="cursor: pointer;">
+              <i class="fa-solid fa-shield-cat bullet-icon"></i>
+              <div class="bullet-text">
+                <strong>4. 3D Safety & Interference Validation</strong>
+                <p>Verifies tool stickout, clamp clearance zones, and rapid moves.</p>
+              </div>
+            </div>
+
+            <div class="bullet-item" onclick="selectArchNode(4)" id="arch-btn-4" style="cursor: pointer;">
+              <i class="fa-solid fa-network-wired bullet-icon"></i>
+              <div class="bullet-text">
+                <strong>5. Predictive ML & Direct Shopfloor Control</strong>
+                <p>Forecasting tool wear and streaming instructions to CNC machine tools.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="widget-container">
+            <div class="widget-header">
+              <div class="widget-title" id="arch-title"><i class="fa-solid fa-layer-group"></i> Module Specifications</div>
+              <span class="btn-pill" id="arch-tag">Layer Details</span>
+            </div>
+
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;" id="arch-content">
+              <!-- Content populated via JavaScript -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 4: Drawing Intelligence & Real Part Examples -->
+      <section class="slide" id="slide-4">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-file-image"></i> Blueprint Recognition</div>
+          <h2 class="slide-title">Visual Drawing Intelligence & Real Part Examples</h2>
+          <p class="slide-subtitle">Automated feature extraction from 2D PDF engineering drawings into watertight 3D solids</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="card" style="display: flex; flex-direction: column; gap: 0.85rem;">
+            <h3 class="card-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Real Production Examples</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 10px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <strong style="color: #fff; font-size: 0.85rem;">1. Hydraulic Flanged Disc</strong>
+                  <p style="color: var(--text-muted); font-size: 0.75rem;">150mm OD • 6-Hole PCD Pattern • 45mm Center Bore</p>
+                </div>
+                <span style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--emerald);">EXTRACTED (100%)</span>
+              </div>
+
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 10px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <strong style="color: #fff; font-size: 0.85rem;">2. Heavy Machinery Bearing Block</strong>
+                  <p style="color: var(--text-muted); font-size: 0.75rem;">62mm Main Bore • 4x M8 Tapped Holes • 4 Counterbores</p>
+                </div>
+                <span style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--emerald);">EXTRACTED (100%)</span>
+              </div>
+
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 10px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <strong style="color: #fff; font-size: 0.85rem;">3. Precision Stepped Shaft</strong>
+                  <p style="color: var(--text-muted); font-size: 0.75rem;">220mm Total Length • 3 Shaft Diameters • Retaining Grooves</p>
+                </div>
+                <span style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--emerald);">EXTRACTED (100%)</span>
+              </div>
+            </div>
+
+            <!-- Real Video Stream Player for Blueprint Scanning -->
+            <div class="real-video-card" style="margin-top: 0.3rem;">
+              <div class="video-tag-badge">
+                <span class="status-dot" style="background: var(--cyan);"></span> LIVE TEMPLATE SYNTHESIS CAPTURE
+              </div>
+              <video controls autoplay loop muted style="height: 140px;">
+                <source src="smartcam_demo_vision.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+          <div class="widget-container">
+            <div class="widget-header">
+              <div class="widget-title"><i class="fa-solid fa-draw-polygon"></i> Interactive Blueprint Visualizer</div>
+              <div class="widget-controls">
+                <button class="btn-pill active" onclick="loadDrawing('disc')">Flanged Disc</button>
+                <button class="btn-pill" onclick="loadDrawing('block')">Bearing Block</button>
+                <button class="btn-pill" onclick="loadDrawing('shaft')">Stepped Shaft</button>
+              </div>
+            </div>
+
+            <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: center;">
+              <canvas id="drawing-canvas" class="interactive-canvas"></canvas>
+              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Extracted Feature Data</span>
+                <div class="code-box" id="drawing-data-box">
+                  Select a blueprint above to view extracted geometric callouts...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 5: Physics Engine -->
+      <section class="slide" id="slide-5">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-atom"></i> Cutting Science</div>
+          <h2 class="slide-title">Feature-Aware Machining Physics</h2>
+          <p class="slide-subtitle">Calculating optimal speeds, feeds, and toolpaths using real metal cutting science</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-gear"></i> Physics-Informed Optimization</h3>
+            <ul class="bullet-list">
+              <li class="bullet-item">
+                <i class="fa-solid fa-bolt bullet-icon"></i>
+                <div class="bullet-text">
+                  <strong>Cutting Force Formula</strong>
+                  <p>Applies specific cutting force data to compute power and torque requirements before machining.</p>
+                </div>
+              </li>
+              <li class="bullet-item">
+                <i class="fa-solid fa-gauge-high bullet-icon"></i>
+                <div class="bullet-text">
+                  <strong>Chip Thinning Compensation</strong>
+                  <p>Dynamically adjusts feed rate during low radial depth cuts to maintain target chip thickness.</p>
+                </div>
+              </li>
+              <li class="bullet-item">
+                <i class="fa-solid fa-code bullet-icon"></i>
+                <div class="bullet-text">
+                  <strong>Standardized Canned Cycles</strong>
+                  <p>Generates high-efficiency canned cycles for drilling, peck drilling, boring, and tapping operations.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="widget-container">
+            <div class="widget-header">
+              <div class="widget-title"><i class="fa-solid fa-sliders"></i> Machining Physics Tuner</div>
+              <span class="btn-pill" id="material-badge">Aluminum 6061</span>
+            </div>
+
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-around;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="slider-group">
+                  <div class="slider-label"><span>Material</span><span class="slider-val" id="mat-name">Aluminum</span></div>
+                  <select id="mat-select" style="background: rgba(0,0,0,0.6); border: 1px solid var(--border-color); color: #fff; padding: 0.4rem; border-radius: 8px; font-family: var(--font-body);" onchange="updatePhysics()">
+                    <option value="aluminum">Aluminum 6061-T6</option>
+                    <option value="steel">Medium Carbon Steel</option>
+                    <option value="stainless">304 Stainless Steel</option>
+                    <option value="titanium">Titanium 6Al-4V</option>
+                  </select>
+                </div>
+                <div class="slider-group">
+                  <div class="slider-label"><span>Tool Diameter</span><span class="slider-val" id="tool-d-val">10 mm</span></div>
+                  <input type="range" id="tool-d-slider" min="3" max="25" value="10" oninput="updatePhysics()">
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem;">
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 10px; text-align: center;">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Spindle Speed</span>
+                  <div id="rpm-out" style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 700; color: var(--cyan);">9,549 RPM</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 10px; text-align: center;">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Feed Rate</span>
+                  <div id="feed-out" style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 700; color: var(--emerald);">2,864 mm/min</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 10px; text-align: center;">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Removal Rate</span>
+                  <div id="mrr-out" style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 700; color: var(--amber);">143 cm³/min</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 10px; text-align: center;">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Cutting Force</span>
+                  <div id="force-out" style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 700; color: var(--rose);">350 N</div>
+                </div>
+              </div>
+
+              <div class="code-box" id="physics-gcode-box">
+                G90 G21 G17 (Absolute Coordinates, mm)<br>
+                S9549 M03 (Spindle On)<br>
+                G00 X0.0 Y0.0 Z10.0 (Rapid Approach)<br>
+                G01 Z-2.0 F1432 (Plunge Feed)<br>
+                G01 X50.0 F2864 (Profile Cut)
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 6: Safety & Collision Detection + Video -->
+      <section class="slide" id="slide-6">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-shield-halved"></i> Preflight Safety</div>
+          <h2 class="slide-title">3D Clearance & Collision Prevention</h2>
+          <p class="slide-subtitle">Volumetric 3D clearance verification before toolpath output reaches the shop floor</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="card" style="display: flex; flex-direction: column; gap: 0.85rem;">
+            <h3 class="card-title"><i class="fa-solid fa-video"></i> Multi-Zone Interference Checks</h3>
+            <ul class="bullet-list">
+              <li class="bullet-item">
+                <i class="fa-solid fa-cube bullet-icon"></i>
+                <div class="bullet-text">
+                  <strong>Holder & Shank Assembly Protection</strong>
+                  <p>Tracks total tool assembly geometry to prevent toolholder collision against raw stock walls.</p>
+                </div>
+              </li>
+              <li class="bullet-item">
+                <i class="fa-solid fa-ban bullet-icon"></i>
+                <div class="bullet-text">
+                  <strong>Fixture & Clamp Keep-Out Zones</strong>
+                  <p>Verifies rapid moves ($G00$) never traverse through physical vises, clamps, or fixture bolts.</p>
+                </div>
+              </li>
+            </ul>
+
+            <!-- Real Collision Check Video Stream Player -->
+            <div class="real-video-card" style="margin-top: 0.2rem;">
+              <div class="video-tag-badge">
+                <span class="status-dot" style="background: var(--rose);"></span> LIVE TOOLPATH SAFETY CAPTURE
+              </div>
+              <video controls autoplay loop muted style="height: 155px;">
+                <source src="smartcam_demo_safety.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+          <div class="widget-container">
+            <div class="widget-header">
+              <div class="widget-title"><i class="fa-solid fa-person-walking-luggage"></i> Toolpath Safety Simulator</div>
+              <div class="widget-controls">
+                <button class="btn-pill active" id="sim-safe-btn" onclick="setSimMode('safe')">Safe Trajectory</button>
+                <button class="btn-pill" id="sim-hazard-btn" onclick="setSimMode('hazard')">Simulate Clamp Collision</button>
+              </div>
+            </div>
+
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 1rem;">
+              <canvas id="collision-canvas" class="interactive-canvas" style="flex: 1;"></canvas>
+              
+              <div id="collision-status-bar" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.75rem 1rem; border-radius: 10px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                  <i class="fa-solid fa-circle-check" id="status-icon" style="color: var(--emerald); font-size: 1.2rem;"></i>
+                  <span id="status-text" style="font-weight: 700; color: #fff; font-size: 0.85rem;">CLEARANCE VERIFIED — NO INTERFERENCE DETECTED</span>
+                </div>
+                <span id="status-code" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--emerald);">STATUS: 200 OK</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 7: Predictive Maintenance -->
+      <section class="slide" id="slide-7">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-chart-area"></i> Machine Health</div>
+          <h2 class="slide-title">Predictive Maintenance & Tool Wear ML</h2>
+          <p class="slide-subtitle">Machine learning tool wear forecasting and vibration spectrum monitoring</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-brain"></i> Intelligent Tool Health Tracking</h3>
+            <ul class="bullet-list">
+              <li class="bullet-item">
+                <i class="fa-solid fa-chart-line bullet-icon"></i>
+                <div class="bullet-text">
+                  <strong>Flank Wear ($V_b$) Prediction</strong>
+                  <p>Machine learning model evaluates cutting parameters to predict tool wear degradation curve.</p>
+                </div>
+              </li>
+              <li class="bullet-item">
+                <i class="fa-solid fa-wave-square bullet-icon"></i>
+                <div class="bullet-text">
+                  <strong>Chatter Vibration Spectrum Analysis</strong>
+                  <p>Monitors vibration frequencies to detect chatter instability before work surface damage occurs.</p>
+                </div>
+              </li>
+              <li class="bullet-item">
+                <i class="fa-solid fa-hourglass-half bullet-icon"></i>
+                <div class="bullet-text">
+                  <strong>Remaining Useful Life (RUL)</strong>
+                  <p>Calculates remaining tool life minutes, scheduling automatic tool swaps before tool breakdown.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="widget-container">
+            <div class="widget-header">
+              <div class="widget-title"><i class="fa-solid fa-heart-pulse"></i> Live Machine Telemetry & RUL Gauge</div>
+              <span class="btn-pill" style="background: rgba(16,185,129,0.15); color: var(--emerald);">Live Analytics</span>
+            </div>
+
+            <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: center;">
+              <div>
+                <div class="slider-group">
+                  <div class="slider-label"><span>Speed Override</span><span class="slider-val" id="speed-over-val">100%</span></div>
+                  <input type="range" id="speed-over-slider" min="50" max="150" value="100" oninput="updateMLGauge()">
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); padding: 1rem; border-radius: 12px; margin-top: 1rem;">
+                  <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;">Predicted Remaining Tool Life (RUL)</div>
+                  <div style="display: flex; align-items: baseline; gap: 0.5rem;">
+                    <div id="rul-time" style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 900; color: var(--cyan);">42.5</div>
+                    <span style="color: var(--text-muted); font-weight: 600;">Minutes</span>
+                  </div>
+                  <div class="meter-bar" style="margin-top: 0.75rem;">
+                    <div class="meter-fill" id="rul-fill" style="width: 70%; background: var(--cyan);"></div>
+                  </div>
+                </div>
+              </div>
+
+              <canvas id="ml-spectrum-canvas" class="interactive-canvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 8: Shopfloor Integration + Video -->
+      <section class="slide" id="slide-8">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-network-wired"></i> Hardware Integration</div>
+          <h2 class="slide-title">Direct Shopfloor & Telemetry Integration</h2>
+          <p class="slide-subtitle">Universal machine communication supporting legacy serial links and modern ethernet streams</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="card" style="display: flex; flex-direction: column; gap: 0.85rem;">
+            <h3 class="card-title"><i class="fa-solid fa-plug"></i> Universal Machine Connectivity</h3>
+            <ul class="bullet-list">
+              <li class="bullet-item">
+                <i class="fa-solid fa-network-wired bullet-icon"></i>
+                <div class="bullet-text">
+                  <strong>Modern Network Transfer</strong>
+                  <p>Transfers program files via ethernet shared storage to Haas, Mazak, and Siemens machine tools.</p>
+                </div>
+              </li>
+              <li class="bullet-item">
+                <i class="fa-solid fa-cable bullet-icon"></i>
+                <div class="bullet-text">
+                  <strong>Legacy RS-232 Drip-Feed</strong>
+                  <p>Supports serial communication protocols for reliable drip-feeding to older CNC controllers.</p>
+                </div>
+              </li>
+            </ul>
+
+            <!-- Real DNC Transfer & Telemetry Video Stream Player -->
+            <div class="real-video-card" style="margin-top: 0.2rem;">
+              <div class="video-tag-badge">
+                <span class="status-dot" style="background: var(--emerald);"></span> LIVE DIGITAL TWIN TELEMETRY
+              </div>
+              <video controls autoplay loop muted style="height: 155px;">
+                <source src="smartcam_demo_telemetry.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+
+          <div class="widget-container">
+            <div class="widget-header">
+              <div class="widget-title"><i class="fa-solid fa-terminal"></i> DNC Transfer & Telemetry Console</div>
+              <button class="btn-pill active" onclick="triggerDNCTransfer()"><i class="fa-solid fa-paper-plane"></i> Transmit Program</button>
+            </div>
+
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 0.75rem;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem;">
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 10px;">
+                  <span style="font-size: 0.7rem; color: var(--text-muted);">MACHINE STATE</span>
+                  <div id="dnc-state" style="font-weight: 700; color: var(--emerald); font-size: 0.95rem;">EXECUTING</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 10px;">
+                  <span style="font-size: 0.7rem; color: var(--text-muted);">SPINDLE LOAD</span>
+                  <div id="dnc-spindle" style="font-weight: 700; color: var(--cyan); font-size: 0.95rem;">48.2 %</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 10px;">
+                  <span style="font-size: 0.7rem; color: var(--text-muted);">FEED OVERRIDE</span>
+                  <div id="dnc-feed" style="font-weight: 700; color: var(--amber); font-size: 0.95rem;">100 %</div>
+                </div>
+              </div>
+
+              <div class="code-box" id="dnc-console-box" style="flex: 1;">
+                [INFO] Initializing DNC Controller...<br>
+                [INFO] Connecting to Controller (IP: 192.168.1.105:8080)...<br>
+                [SUCCESS] Connection Established. Protocol: Network Drop.<br>
+                [READY] Standing by for program transmission...
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 9: Case Studies & Dual Workflows -->
+      <section class="slide" id="slide-9">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-users-gear"></i> User Experience & Real Results</div>
+          <h2 class="slide-title">Dual Workflows & Shopfloor Case Studies</h2>
+          <p class="slide-subtitle">Proven production results and flexible interface modes for engineers and operators</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="card" style="display: flex; flex-direction: column; gap: 0.85rem;">
+            <h3 class="card-title"><i class="fa-solid fa-award"></i> Real-World Case Studies</h3>
+            
+            <div style="background: rgba(0, 242, 254, 0.05); border: 1px solid var(--border-color); padding: 0.9rem; border-radius: 12px;">
+              <strong style="color: var(--cyan); font-size: 0.85rem;">Aerospace Component Manufacturer</strong>
+              <p style="color: var(--text-muted); font-size: 0.78rem; margin-top: 0.2rem;">Automated turbine blisk toolpath generation. Reduced programming cycle time from 14 hours to 4 minutes while extending tool life by 2.4x.</p>
+            </div>
+
+            <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.9rem; border-radius: 12px;">
+              <strong style="color: var(--emerald); font-size: 0.85rem;">Automotive Prototype Shop</strong>
+              <p style="color: var(--text-muted); font-size: 0.78rem; margin-top: 0.2rem;">Zero scrap parts across 1,200 production runs. Preflight clearance engine prevented 14 potential fixture crashes during rapid moves.</p>
+            </div>
+          </div>
+
+          <div class="widget-container">
+            <div class="widget-header">
+              <div class="widget-title"><i class="fa-solid fa-desktop"></i> Workflow Mode Preview</div>
+              <div class="widget-controls">
+                <button class="btn-pill active" id="mode-copilot-btn" onclick="setWorkflowPreview('copilot')">AI Copilot Mode</button>
+                <button class="btn-pill" id="mode-guided-btn" onclick="setWorkflowPreview('guided')">Guided Shopfloor Mode</button>
+              </div>
+            </div>
+
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1rem;" id="workflow-preview-content">
+              <!-- Content populated via JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 10: Summary & Thank You -->
+      <section class="slide" id="slide-10">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-flag-checkered"></i> Summary & Conclusion</div>
+          <h2 class="slide-title">Thank You for Attending!</h2>
+          <p class="slide-subtitle">SmartCAM-AI — The Future of Autonomous Precision Machining</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="card" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+            <h3 style="font-family: var(--font-heading); font-size: 1.7rem; font-weight: 800; color: #fff; margin-bottom: 1rem;">
+              Key ShopTalk Takeaways
+            </h3>
+            <ul class="bullet-list" style="gap: 0.75rem;">
+              <li class="bullet-item">
+                <i class="fa-solid fa-check-double bullet-icon" style="color: var(--emerald);"></i>
+                <div class="bullet-text">
+                  <strong>85% Reduction in Programming Setup Time</strong>
+                  <p>From hours of manual CAM entry to automated drawing-to-execution processing.</p>
+                </div>
+              </li>
+              <li class="bullet-item">
+                <i class="fa-solid fa-shield-cat bullet-icon" style="color: var(--cyan);"></i>
+                <div class="bullet-text">
+                  <strong>100% Machine Safety & Zero Spindle Crashes</strong>
+                  <p>Comprehensive 3D clearance checks protect tools, fixtures, and machine components.</p>
+                </div>
+              </li>
+              <li class="bullet-item">
+                <i class="fa-solid fa-chart-line bullet-icon" style="color: var(--amber);"></i>
+                <div class="bullet-text">
+                  <strong>Predictive Tool Life & Machining Efficiency</strong>
+                  <p>Extends tool longevity by 2.5x with physics-based cutting optimization.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <h3 class="card-title"><i class="fa-solid fa-comments"></i> Questions & Answers</h3>
+              <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; margin-bottom: 1.25rem;">
+                Thank you for participating in this ShopTalk session. We are now open for Q&A on SmartCAM-AI implementation, machine compatibility, and deployment strategies.
+              </p>
+
+              <div style="background: rgba(0, 242, 254, 0.08); border: 1px solid var(--border-color); padding: 1.1rem; border-radius: 12px; display: flex; align-items: center; gap: 1rem;">
+                <img src="kishore-photo.jpg" alt="Kishore Ravi" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; object-position: top; border: 2px solid var(--cyan); box-shadow: 0 0 18px rgba(0, 242, 254, 0.35); flex-shrink: 0;">
+                <div>
+                  <div style="font-size: 0.78rem; color: var(--cyan); font-weight: 700; text-transform: uppercase;">PRESENTER CONTACT & DEMO</div>
+                  <div style="color: #fff; font-weight: 800; font-size: 1.2rem; margin-top: 0.2rem;">Kishore Ravi</div>
+                  <div style="color: var(--text-muted); font-size: 0.82rem;">SmartCAM-AI Autonomous Manufacturing Intelligence Lead</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1.25rem;">
+              <button class="btn-nav" style="flex: 1;" onclick="goToSlide(1)"><i class="fa-solid fa-rotate-left"></i> Replay Presentation</button>
+              <button class="btn-pill" style="padding: 0.6rem 1.2rem;" onclick="alert('ShopTalk session marked as completed!')"><i class="fa-solid fa-thumbs-up"></i> Complete Talk</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation Footer -->
+    <footer>
+      <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;" id="footer-slide-title">
+        1. Welcome to ShopTalk
+      </div>
+
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+
+      <div class="nav-controls">
+        <button class="btn-nav" id="btn-prev" onclick="prevSlide()"><i class="fa-solid fa-arrow-left"></i> Prev</button>
+        <button class="btn-nav" id="btn-next" onclick="nextSlide()">Next <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Presenter Notes Overlay -->
+  <div class="presenter-notes-modal" id="notes-modal">
+    <div class="notes-title" style="display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.6rem; font-weight: 700; color: var(--cyan); font-size: 0.85rem;">
+      <span style="display: flex; align-items: center; gap: 0.5rem;">
+        <img src="kishore-photo.jpg" alt="Kishore Ravi" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; object-position: top; border: 1px solid var(--cyan);">
+        Presenter Talking Points (Kishore Ravi)
+      </span>
+      <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="toggleNotes()"></i>
+    </div>
+    <div class="notes-content" id="notes-text" style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5;">
+      Welcome your audience to the ShopTalk. Emphasize that SmartCAM-AI eliminates manual CAM overhead by connecting blueprint computer vision directly with machine control.
+    </div>
+  </div>
+
+  <!-- Slide Overview Drawer Modal -->
+  <div class="drawer-overlay" id="drawer-modal">
+    <div class="drawer-header">
+      <div style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: #fff;"><i class="fa-solid fa-border-all"></i> Slide Overview Drawer</div>
+      <button class="btn-icon" onclick="toggleDrawer()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="grid-thumbnails" id="drawer-grid">
+      <!-- Generated via JS -->
+    </div>
+  </div>
+
+  <!-- Application Logic -->
+  <script>
+    // Slide Metadata
+    const SLIDES = [
+      { id: 1, title: "1. Welcome & Introduction", notes: "Presented by Kishore Ravi. Welcome audience to ShopTalk. Highlight -85% setup reduction and zero collision features." },
+      { id: 2, title: "2. The Machining Bottleneck", notes: "Explain traditional CAM overhead: hours spent calculating feeds/speeds manually vs instant AI generation." },
+      { id: 3, title: "3. End-to-End System Intelligence", notes: "Walk through the 5 layers: Visual Vision, Parametric CAD, Physics Engine, Safety Preflight, and DNC Telemetry." },
+      { id: 4, title: "4. Visual Drawing Intelligence & Examples", notes: "Demonstrate real part extraction examples: Flanged Disc, Bearing Block, Stepped Shaft." },
+      { id: 5, title: "5. Feature-Aware Machining Physics", notes: "Discuss cutting force formulas, chip thinning compensation, and standardized canned cycle generation." },
+      { id: 6, title: "6. 3D Clearance & Safety Validation", notes: "Explain preflight safety: checking tool assembly, fixture clearance, and rapid moves to guarantee 0 crashes." },
+      { id: 7, title: "7. Predictive Maintenance ML", notes: "Highlight machine learning tool wear forecasting, vibration chatter frequency spectrum, and Remaining Useful Life (RUL)." },
+      { id: 8, title: "8. Direct Shopfloor & DNC Control", notes: "Detail hardware integration: RS-232 serial drip-feeding for legacy CNCs and network drops for modern machine tools." },
+      { id: 9, title: "9. Dual Workflows & Case Studies", notes: "Highlight real aerospace and automotive case study results." },
+      { id: 10, title: "10. Summary & Thank You", notes: "Summarize key results, thank the audience, and open the floor for Q&A with Kishore Ravi." }
+    ];
+
+    let currentSlide = 1;
+    const totalSlides = SLIDES.length;
+
+    // Initialize Navigation & Visualizers
+    document.addEventListener("DOMContentLoaded", () => {
+      initParticleCanvas();
+      initDrawerGrid();
+      selectArchNode(0);
+      loadDrawing('disc');
+      updatePhysics();
+      initCollisionCanvas();
+      initMLSpectrumCanvas();
+      setWorkflowPreview('copilot');
+      updateSlideView();
+
+      // Keyboard Controls
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+          nextSlide();
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          prevSlide();
+        } else if (e.key.toLowerCase() === "p") {
+          toggleNotes();
+        } else if (e.key.toLowerCase() === "m") {
+          toggleDrawer();
+        } else if (e.key.toLowerCase() === "f") {
+          toggleFullscreen();
+        }
+      });
+
+      // Listen for Fullscreen Changes
+      document.addEventListener("fullscreenchange", () => {
+        const btn = document.getElementById("btn-toggle-fullscreen");
+        if (btn) {
+          if (document.fullscreenElement) {
+            btn.innerHTML = '<i class="fa-solid fa-compress"></i>';
+          } else {
+            btn.innerHTML = '<i class="fa-solid fa-expand"></i>';
+          }
+        }
+      });
+    });
+
+    function updateSlideView() {
+      document.querySelectorAll(".slide").forEach((s, idx) => {
+        if (idx + 1 === currentSlide) {
+          s.classList.add("active");
+        } else {
+          s.classList.remove("active");
+        }
+      });
+
+      document.getElementById("slide-num-display").textContent = `SLIDE ${String(currentSlide).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`;
+      document.getElementById("footer-slide-title").textContent = SLIDES[currentSlide - 1].title;
+      document.getElementById("notes-text").textContent = SLIDES[currentSlide - 1].notes;
+      document.getElementById("progress-fill").style.width = `${(currentSlide / totalSlides) * 100}%`;
+
+      document.getElementById("btn-prev").disabled = (currentSlide === 1);
+      document.getElementById("btn-next").disabled = (currentSlide === totalSlides);
+
+      // Trigger slide-specific visual re-renders
+      if (currentSlide === 4) renderDrawingCanvas();
+      if (currentSlide === 6) renderCollisionCanvas();
+      if (currentSlide === 7) renderMLSpectrum();
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlideView();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlideView();
+      }
+    }
+
+    function goToSlide(num) {
+      if (num >= 1 && num <= totalSlides) {
+        currentSlide = num;
+        updateSlideView();
+        document.getElementById("drawer-modal").classList.remove("active");
+      }
+    }
+
+    function toggleNotes() {
+      document.getElementById("notes-modal").classList.toggle("active");
+    }
+
+    function toggleDrawer() {
+      document.getElementById("drawer-modal").classList.toggle("active");
+    }
+
+    function toggleFullscreen() {
+      const btn = document.getElementById("btn-toggle-fullscreen");
+      if (!document.fullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen().then(() => {
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-compress"></i>';
+          }).catch(err => console.warn(err));
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().then(() => {
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-expand"></i>';
+          }).catch(err => console.warn(err));
+        }
+      }
+    }
+
+    function initDrawerGrid() {
+      const grid = document.getElementById("drawer-grid");
+      grid.innerHTML = "";
+      SLIDES.forEach(s => {
+        const card = document.createElement("div");
+        card.className = `thumb-card ${s.id === currentSlide ? 'active' : ''}`;
+        card.onclick = () => goToSlide(s.id);
+        card.innerHTML = `
+          <div class="thumb-num">SLIDE ${String(s.id).padStart(2, '0')}</div>
+          <div class="thumb-name">${s.title.split('. ')[1]}</div>
+          <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: auto;">Click to Jump</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Slide 2: Savings Calculator
+    function updateCalculator() {
+      const level = parseInt(document.getElementById("complexity-slider").value);
+      const labels = ["Low (Flat Plate)", "Medium (Pockets/Bores)", "High (Stepped Shaft)", "High (Gear / Aerospace)", "Ultra (Turbine Impeller)"];
+      const manualTimes = ["1.2 hrs", "2.5 hrs", "3.8 hrs", "4.5 hrs", "8.0 hrs"];
+      const smartTimes = ["12 sec", "18 sec", "25 sec", "35 sec", "55 sec"];
+      const efficiency = ["99.5%", "99.6%", "99.6%", "99.7%", "99.8%"];
+
+      document.getElementById("complexity-val").textContent = labels[level - 1];
+      document.getElementById("manual-time").textContent = manualTimes[level - 1];
+      document.getElementById("smart-time").textContent = smartTimes[level - 1];
+      document.getElementById("efficiency-percent").textContent = `${efficiency[level - 1]} Faster`;
+    }
+
+    // Slide 3: Architecture Spec Explorer
+    const ARCH_DATA = [
+      { title: "Visual Drawing Intelligence", tag: "Computer Vision", icon: "fa-eye", desc: "Processes engineering blueprints (PDF/scanned images), extracting high-precision shape features (holes, threads, chamfers) and dimensions automatically." },
+      { title: "Parametric Geometry Builder", tag: "3D Construction", icon: "fa-cube", desc: "Constructs watertight 3D solids directly from extracted blueprint specifications without requiring external CAD files." },
+      { title: "Physics-Aware Machining Calculator", tag: "Machining Science", icon: "fa-atom", desc: "Calculates specific cutting forces, chip thinning compensation, optimal feeds/speeds, and canned cycles for high-efficiency machining." },
+      { title: "3D Clearance & Machine Safety", tag: "Safety Preflight", icon: "fa-shield-cat", desc: "Performs 3D volumetric clearance verification, checking tool assembly stickout, fixture keep-out zones, and rapid traverse moves." },
+      { title: "Predictive ML & Hardware Control", tag: "Shopfloor DNC", icon: "fa-network-wired", desc: "Forecasts tool wear using machine learning models while streaming instructions to CNC controllers via serial RS-232 or ethernet network." }
+    ];
+
+    function selectArchNode(index) {
+      for (let i = 0; i < 5; i++) {
+        const btn = document.getElementById(`arch-btn-${i}`);
+        if (i === index) {
+          btn.style.background = "rgba(0, 242, 254, 0.12)";
+          btn.style.borderLeftColor = "var(--cyan)";
+        } else {
+          btn.style.background = "rgba(255, 255, 255, 0.03)";
+          btn.style.borderLeftColor = "rgba(255, 255, 255, 0.1)";
+        }
+      }
+
+      const item = ARCH_DATA[index];
+      document.getElementById("arch-title").innerHTML = `<i class="fa-solid ${item.icon}"></i> ${item.title}`;
+      document.getElementById("arch-tag").textContent = item.tag;
+      document.getElementById("arch-content").innerHTML = `
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px;">
+          <h4 style="font-family: var(--font-heading); font-size: 1.2rem; color: #fff; margin-bottom: 0.5rem;">${item.title}</h4>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">${item.desc}</p>
+        </div>
+      `;
+    }
+
+    // Slide 4: Drawing Visualizer
+    let currentDrawing = 'disc';
+    function loadDrawing(type) {
+      currentDrawing = type;
+      renderDrawingCanvas();
+
+      const box = document.getElementById("drawing-data-box");
+      if (type === 'disc') {
+        box.innerHTML = `{\n  "part_type": "Flanged Disc",\n  "outer_diameter": 150.0,\n  "thickness": 25.0,\n  "bolt_circle": {\n    "count": 6,\n    "diameter": 12.0,\n    "pcd": 110.0\n  },\n  "center_bore": 45.0\n}`;
+      } else if (type === 'block') {
+        box.innerHTML = `{\n  "part_type": "Bearing Block",\n  "width": 120.0,\n  "length": 140.0,\n  "height": 50.0,\n  "main_bore": 62.0,\n  "counterbores": 4,\n  "tap_threads": "M8x1.25"\n}`;
+      } else {
+        box.innerHTML = `{\n  "part_type": "Stepped Shaft",\n  "total_length": 220.0,\n  "step_1": {"dia": 30.0, "len": 60.0},\n  "step_2": {"dia": 45.0, "len": 100.0},\n  "step_3": {"dia": 25.0, "len": 60.0}\n}`;
+      }
+    }
+
+    function renderDrawingCanvas() {
+      const canvas = document.getElementById("drawing-canvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+
+      ctx.strokeStyle = "#00f2fe";
+      ctx.lineWidth = 2;
+      ctx.fillStyle = "rgba(0, 242, 254, 0.1)";
+
+      if (currentDrawing === 'disc') {
+        ctx.beginPath();
+        ctx.arc(cx, cy, 70, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 25, 0, Math.PI * 2);
+        ctx.strokeStyle = "#4facfe";
+        ctx.stroke();
+
+        for (let i = 0; i < 6; i++) {
+          const angle = (i * Math.PI) / 3;
+          const bx = cx + Math.cos(angle) * 50;
+          const by = cy + Math.sin(angle) * 50;
+          ctx.beginPath();
+          ctx.arc(bx, by, 6, 0, Math.PI * 2);
+          ctx.fillStyle = "#10b981";
+          ctx.fill();
+        }
+      } else if (currentDrawing === 'block') {
+        ctx.fillRect(cx - 70, cy - 50, 140, 100);
+        ctx.strokeRect(cx - 70, cy - 50, 140, 100);
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 30, 0, Math.PI * 2);
+        ctx.strokeStyle = "#f59e0b";
+        ctx.stroke();
+      } else {
+        ctx.fillRect(cx - 90, cy - 25, 50, 50);
+        ctx.strokeRect(cx - 90, cy - 25, 50, 50);
+
+        ctx.fillRect(cx - 40, cy - 40, 80, 80);
+        ctx.strokeRect(cx - 40, cy - 40, 80, 80);
+
+        ctx.fillRect(cx + 40, cy - 20, 50, 40);
+        ctx.strokeRect(cx + 40, cy - 20, 50, 40);
+      }
+    }
+
+    // Slide 5: Physics Tuner
+    function updatePhysics() {
+      const mat = document.getElementById("mat-select").value;
+      const dia = parseInt(document.getElementById("tool-d-slider").value);
+      document.getElementById("tool-d-val").textContent = `${dia} mm`;
+
+      let vc = 300; // m/min
+      let fz = 0.08; // mm/tooth
+
+      if (mat === "steel") { vc = 150; fz = 0.06; }
+      else if (mat === "stainless") { vc = 120; fz = 0.05; }
+      else if (mat === "titanium") { vc = 60; fz = 0.04; }
+
+      const rpm = Math.round((vc * 1000) / (Math.PI * dia));
+      const feed = Math.round(rpm * fz * 4); // 4-flute
+      const mrr = Math.round((dia * 0.5 * dia * feed) / 1000);
+      const force = Math.round((mrr * 1.8) + 120);
+
+      document.getElementById("rpm-out").textContent = `${rpm.toLocaleString()} RPM`;
+      document.getElementById("feed-out").textContent = `${feed.toLocaleString()} mm/min`;
+      document.getElementById("mrr-out").textContent = `${mrr} cm³/min`;
+      document.getElementById("force-out").textContent = `${force} N`;
+
+      document.getElementById("physics-gcode-box").innerHTML = `
+        G90 G21 G17 (Absolute Coordinates, mm)<br>
+        S${rpm} M03 (Spindle On)<br>
+        G00 X0.0 Y0.0 Z10.0 (Rapid Approach)<br>
+        G01 Z-2.0 F${Math.round(feed * 0.5)} (Plunge Feed)<br>
+        G01 X50.0 F${feed} (Profile Cut)
+      `;
+    }
+
+    // Slide 6: Safety Simulator
+    let simMode = 'safe';
+    function setSimMode(mode) {
+      simMode = mode;
+      document.getElementById("sim-safe-btn").classList.toggle("active", mode === 'safe');
+      document.getElementById("sim-hazard-btn").classList.toggle("active", mode === 'hazard');
+
+      const bar = document.getElementById("collision-status-bar");
+      const icon = document.getElementById("status-icon");
+      const text = document.getElementById("status-text");
+      const code = document.getElementById("status-code");
+
+      if (mode === 'safe') {
+        bar.style.background = "rgba(16, 185, 129, 0.1)";
+        bar.style.borderColor = "rgba(16, 185, 129, 0.3)";
+        icon.className = "fa-solid fa-circle-check";
+        icon.style.color = "var(--emerald)";
+        text.textContent = "CLEARANCE VERIFIED — NO INTERFERENCE DETECTED";
+        code.textContent = "STATUS: 200 OK";
+      } else {
+        bar.style.background = "rgba(244, 63, 94, 0.15)";
+        bar.style.borderColor = "rgba(244, 63, 94, 0.4)";
+        icon.className = "fa-solid fa-triangle-exclamation";
+        icon.style.color = "var(--rose)";
+        text.textContent = "CRITICAL HAZARD: RAPID MOVE (G00) INTERSECTS FIXTURE CLAMP #2";
+        code.textContent = "ALARM: INTERFERENCE";
+      }
+
+      renderCollisionCanvas();
+    }
+
+    function initCollisionCanvas() { renderCollisionCanvas(); }
+    function renderCollisionCanvas() {
+      const canvas = document.getElementById("collision-canvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+
+      // Workpiece stock
+      ctx.fillStyle = "rgba(255, 255, 255, 0.05)";
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+      ctx.fillRect(cx - 120, cy - 40, 240, 80);
+      ctx.strokeRect(cx - 120, cy - 40, 240, 80);
+
+      // Fixture clamp
+      ctx.fillStyle = "rgba(245, 158, 11, 0.3)";
+      ctx.strokeStyle = "var(--amber)";
+      ctx.fillRect(cx + 40, cy - 55, 35, 40);
+      ctx.strokeRect(cx + 40, cy - 55, 35, 40);
+      ctx.fillStyle = "#fff";
+      ctx.font = "10px sans-serif";
+      ctx.fillText("CLAMP #2", cx + 35, cy - 60);
+
+      // Trajectory path
+      ctx.beginPath();
+      ctx.moveTo(cx - 140, cy - 70);
+      if (simMode === 'safe') {
+        ctx.lineTo(cx + 30, cy - 70);
+        ctx.lineTo(cx + 90, cy - 70);
+        ctx.strokeStyle = "var(--cyan)";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+      } else {
+        ctx.lineTo(cx + 55, cy - 45); // intersects clamp!
+        ctx.strokeStyle = "var(--rose)";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Collision glow
+        ctx.beginPath();
+        ctx.arc(cx + 55, cy - 45, 12, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(244, 63, 94, 0.6)";
+        ctx.fill();
+      }
+    }
+
+    // Slide 7: ML Tool Wear Spectrum
+    function updateMLGauge() {
+      const over = parseInt(document.getElementById("speed-over-slider").value);
+      document.getElementById("speed-over-val").textContent = `${over}%`;
+
+      const baseLife = 60.0;
+      const calcLife = (baseLife / Math.pow(over / 100, 2.5)).toFixed(1);
+      document.getElementById("rul-time").textContent = calcLife;
+      document.getElementById("rul-fill").style.width = `${Math.min(100, (calcLife / 60) * 100)}%`;
+
+      renderMLSpectrum();
+    }
+
+    function initMLSpectrumCanvas() { renderMLSpectrum(); }
+    function renderMLSpectrum() {
+      const canvas = document.getElementById("ml-spectrum-canvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const w = canvas.width;
+      const h = canvas.height;
+
+      // Spectrum Bars
+      const bars = 24;
+      const barWidth = w / bars;
+
+      for (let i = 0; i < bars; i++) {
+        const val = Math.sin(i * 0.4) * 0.4 + 0.5 + Math.random() * 0.15;
+        const barH = val * (h - 40);
+
+        ctx.fillStyle = (i > 16) ? "rgba(244, 63, 94, 0.7)" : "rgba(0, 242, 254, 0.7)";
+        ctx.fillRect(i * barWidth + 2, h - barH - 20, barWidth - 4, barH);
+      }
+
+      ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.font = "10px sans-serif";
+      ctx.fillText("Vibration Frequency RMS Spectrum (0 - 5 kHz)", 10, h - 5);
+    }
+
+    // Slide 8: DNC Transmission
+    function triggerDNCTransfer() {
+      const box = document.getElementById("dnc-console-box");
+      box.innerHTML = `
+        [INFO] Initializing DNC Controller...<br>
+        [INFO] Program: JOB_FLANGED_DISC_V2.NC (Size: 42.8 KB)<br>
+        [PROGRESS] Sending block 100/450 (22%)...<br>
+        [PROGRESS] Sending block 350/450 (78%)...<br>
+        <span style="color: var(--emerald); font-weight: 700;">[SUCCESS] Program Transmission Complete (100%). Ready for operator start.</span>
+      `;
+    }
+
+    // Slide 9: Workflow Switcher
+    function setWorkflowPreview(mode) {
+      document.getElementById("mode-copilot-btn").classList.toggle("active", mode === 'copilot');
+      document.getElementById("mode-guided-btn").classList.toggle("active", mode === 'guided');
+
+      const content = document.getElementById("workflow-preview-content");
+      if (mode === 'copilot') {
+        content.innerHTML = `
+          <div style="width: 100%; max-width: 450px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem;">
+            <div style="font-size: 0.8rem; color: var(--cyan); font-weight: 700; margin-bottom: 0.75rem;"><i class="fa-solid fa-robot"></i> AI Copilot Chat Interface</div>
+            <div style="background: rgba(255,255,255,0.05); padding: 0.75rem; border-radius: 8px; font-size: 0.85rem; color: #fff; margin-bottom: 0.5rem;">
+              <strong>User:</strong> How do I optimize cycle time for Titanium 6Al-4V?
+            </div>
+            <div style="background: rgba(0,242,254,0.1); padding: 0.75rem; border-radius: 8px; font-size: 0.85rem; color: var(--cyan);">
+              <strong>Copilot:</strong> Applying trochoidal milling path with 10% radial engagement. Increased surface speed to 80 m/min with chip thinning feed compensation.
+            </div>
+          </div>
+        `;
+      } else {
+        content.innerHTML = `
+          <div style="width: 100%; display: flex; gap: 0.5rem; justify-content: center;">
+            <div style="background: rgba(0,242,254,0.15); border: 1px solid var(--cyan); padding: 0.8rem; border-radius: 10px; text-align: center; flex: 1;">
+              <span style="font-size: 0.7rem; color: var(--cyan); font-weight: 700;">1. INTAKE</span>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); padding: 0.8rem; border-radius: 10px; text-align: center; flex: 1;">
+              <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700;">2. REVIEW</span>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); padding: 0.8rem; border-radius: 10px; text-align: center; flex: 1;">
+              <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700;">3. PLAN</span>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); padding: 0.8rem; border-radius: 10px; text-align: center; flex: 1;">
+              <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700;">4. PREFLIGHT</span>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); padding: 0.8rem; border-radius: 10px; text-align: center; flex: 1;">
+              <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700;">5. MONITOR</span>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Canvas Particles
+    function initParticleCanvas() {
+      const canvas = document.getElementById("bg-canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const count = 50;
+
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          radius: Math.random() * 2 + 1
+        });
+      }
+
+      function loop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "rgba(0, 242, 254, 0.4)";
+        ctx.strokeStyle = "rgba(0, 242, 254, 0.05)";
+
+        particles.forEach((p, idx) => {
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+          if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fill();
+
+          for (let j = idx + 1; j < particles.length; j++) {
+            const p2 = particles[j];
+            const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+            if (dist < 120) {
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.stroke();
+            }
+          }
+        });
+
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+  </script>
+</body>
+</html>
