@@ -5,7 +5,7 @@ export const slides = [
     title: "TryoutZero: Check the Die Before It Is Cut",
     subtitle: "A browser-based advisor for small press tool rooms",
     presenter: "Kishore Ravi & Sai Amogh D K",
-    event: "TryoutZero ShopTalk 2026 • Oct 12, 2026",
+    event: "TryoutZero ShopTalk 2026 • Oct 14, 2026",
     speakerNotes: "Welcome everyone to ShopTalk! Today we look at how a small press tool room can check a sheet-metal part before the die is made — using a rules engine grounded in real shop language: blank, draw, thinning, wrinkling, springback, tonnage, nesting. Decision support, never a replacement for tryout."
   },
   {

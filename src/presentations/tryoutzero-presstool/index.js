@@ -8,7 +8,7 @@ export const presentation = {
   type: "Keynote",
   event: "TryoutZero ShopTalk 2026",
   location: "Bangalore, India",
-  date: "Oct 12, 2026",
+  date: "Oct 14, 2026",
   year: "2026",
   duration: "45 mins",
   slidesCount: 8,
