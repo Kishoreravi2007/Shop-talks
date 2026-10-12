@@ -1,9 +1,11 @@
 import smartcamAi from './smartcam-ai';
 import iotSmartTechnology from './iot-smart-technology';
+import tryoutzeroPressTools from './tryoutzero-presstool';
 
 export const INITIAL_PRESENTATIONS = [
   smartcamAi,
-  iotSmartTechnology
+  iotSmartTechnology,
+  tryoutzeroPressTools
 ];
 
 export const SPEAKER_PROFILE = {
@@ -26,9 +28,9 @@ export const SPEAKER_PROFILE = {
     instagram: "https://www.instagram.com/kishore_warrier"
   },
   stats: {
-    talksCount: 2,
-    slidesDelivered: 18,
-    videoDemos: 5,
+    talksCount: 3,
+    slidesDelivered: 26,
+    videoDemos: 9,
     liveStatus: "Active"
   }
 };

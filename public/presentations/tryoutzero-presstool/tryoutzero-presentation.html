@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TryoutZero — Check the Die Before It Is Cut | ShopTalk 2026</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --ink: #0A0D11;
+      --bg-dark: #0d1116;
+      --bg-card: rgba(27, 35, 44, 0.72);
+      --bg-card-hover: rgba(38, 48, 60, 0.9);
+      --border-color: rgba(255, 122, 47, 0.2);
+      --border-glow: rgba(255, 122, 47, 0.55);
+      --orange: #FF7A2F;
+      --copper: #C25A1C;
+      --amber: #f59e0b;
+      --emerald: #22c55e;
+      --rose: #ef4444;
+      --violet: #8b5cf6;
+      --text-main: #F4F2EE;
+      --text-muted: #9aa6b2;
+      --text-dim: #5b6875;
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+    body {
+      background-color: var(--ink);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    #bg-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+    .app-container { position: relative; z-index: 10; display: flex; flex-direction: column; height: 100vh; width: 100vw; }
+
+    /* ---------- Header ---------- */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.9rem 2rem;
+      background: rgba(10, 13, 17, 0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 100;
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.85rem; }
+    .brand-mark {
+      width: 44px; height: 44px; border-radius: 12px; position: relative;
+      background: linear-gradient(135deg, #1b232c, #0d1116);
+      border: 2px solid #2b3540; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 22px rgba(255, 122, 47, 0.25);
+    }
+    .brand-mark .ring { width: 23px; height: 23px; border-radius: 50%; border: 5px solid var(--orange); }
+    .brand-mark .slash { position: absolute; width: 30px; height: 3.4px; background: var(--text-main); border-radius: 3px; transform: rotate(-45deg); }
+    .brand-text h1 { font-family: var(--font-heading); font-size: 1.2rem; font-weight: 800; letter-spacing: -0.5px; }
+    .brand-text h1 span { color: var(--copper); }
+    .brand-text p { font-size: 0.68rem; color: var(--text-muted); letter-spacing: 1.4px; text-transform: uppercase; font-weight: 600; margin-top: 1px; }
+
+    .header-center { display: flex; align-items: center; gap: 1.4rem; }
+    .status-badge {
+      display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.9rem;
+      background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.32);
+      border-radius: 20px; font-size: 0.72rem; color: var(--emerald); font-weight: 700; letter-spacing: 1px;
+    }
+    .status-dot { width: 8px; height: 8px; background: var(--emerald); border-radius: 50%; box-shadow: 0 0 10px var(--emerald); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
+
+    .slide-indicator { font-family: var(--font-heading); font-weight: 700; font-size: 1rem; color: var(--orange); letter-spacing: 1px; }
+
+    .header-actions { display: flex; align-items: center; gap: 0.7rem; }
+    .btn-icon {
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main);
+      width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .2s ease;
+    }
+    .btn-icon:hover { background: rgba(255,122,47,.16); border-color: var(--orange); color: var(--orange); transform: translateY(-2px); }
+
+    /* ---------- Slides ---------- */
+    main { flex: 1; position: relative; overflow: hidden; }
+
+    .slide {
+      position: absolute; inset: 0; padding: 1.6rem 3.2rem 1.2rem;
+      display: flex; flex-direction: column;
+      opacity: 0; visibility: hidden; transform: scale(0.965) translateY(18px);
+      transition: all .5s cubic-bezier(.16,1,.3,1);
+    }
+    .slide.active { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
+
+    .slide-header { margin-bottom: 1rem; }
+    .slide-category {
+      font-size: 0.74rem; font-weight: 700; color: var(--orange); text-transform: uppercase;
+      letter-spacing: 2px; margin-bottom: 0.28rem; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .slide-title { font-family: var(--font-heading); font-size: 1.95rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1.15; }
+    .slide-subtitle { font-size: 0.92rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+    .slide-body { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; align-items: stretch; min-height: 0; }
+    .slide-body.single { grid-template-columns: 1fr; }
+
+    /* ---------- Cards ---------- */
+    .card {
+      background: var(--bg-card); backdrop-filter: blur(12px); border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 1.4rem; box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      position: relative; overflow: hidden; display: flex; flex-direction: column;
+    }
+    .card-title { font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.55rem; }
+    .card-title i { color: var(--orange); }
+
+    .bullet-list { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+    .bullet-item {
+      display: flex; align-items: flex-start; gap: 0.85rem; padding: 0.7rem 0.85rem;
+      background: rgba(255,255,255,0.03); border-left: 3px solid var(--orange);
+      border-radius: 0 10px 10px 0; transition: all .2s ease;
+    }
+    .bullet-item:hover { background: rgba(255,122,47,.09); transform: translateX(5px); }
+    .bullet-item i { color: var(--orange); margin-top: 0.18rem; font-size: 0.95rem; }
+    .bullet-item span { font-size: 0.87rem; line-height: 1.42; color: #dfe3e6; }
+
+    /* ---------- Hero ---------- */
+    .hero { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 1.1rem; height: 100%; }
+    .hero-mark {
+      width: 96px; height: 96px; border-radius: 24px; position: relative;
+      background: linear-gradient(135deg, #1b232c, #0d1116); border: 2.5px solid #2b3540;
+      display: flex; align-items: center; justify-content: center; box-shadow: 0 0 60px rgba(255,122,47,.3);
+    }
+    .hero-mark .ring { width: 50px; height: 50px; border-radius: 50%; border: 11px solid var(--orange); }
+    .hero-mark .slash { position: absolute; width: 64px; height: 7px; background: var(--text-main); border-radius: 4px; transform: rotate(-45deg); }
+    .hero-eyebrow { font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase; color: var(--orange); font-weight: 700; }
+    .hero-title { font-family: var(--font-heading); font-size: 3.1rem; font-weight: 900; letter-spacing: -1px; line-height: 1.08; }
+    .hero-title span { background: linear-gradient(120deg, var(--orange), var(--copper)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-sub { font-size: 1.1rem; color: var(--text-muted); max-width: 780px; line-height: 1.5; }
+    .hero-presenter { display: flex; align-items: center; gap: 0.9rem; margin-top: 0.4rem; padding: 0.5rem 1.1rem 0.5rem 0.5rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 40px; }
+    .hero-presenter img { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; border: 2px solid var(--orange); }
+    .hero-presenter .name { font-weight: 700; font-size: 0.95rem; text-align: left; }
+    .hero-presenter .role { font-size: 0.76rem; color: var(--text-muted); text-align: left; }
+    .hero-chips { display: flex; gap: 0.7rem; margin-top: 0.6rem; flex-wrap: wrap; justify-content: center; }
+    .chip { padding: 0.45rem 1rem; border-radius: 20px; background: rgba(255,255,255,.04); border: 1px solid var(--border-color); font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.45rem; }
+    .chip b { color: var(--orange); font-family: var(--font-mono); }
+
+    /* ---------- Video ---------- */
+    .video-card { background: #000; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 12px 30px rgba(0,0,0,.5); position: relative; }
+    .video-card video { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; }
+    .video-label { position: absolute; top: 10px; left: 10px; background: rgba(10,13,17,.85); border: 1px solid var(--border-color); color: var(--orange); font-size: 0.68rem; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; padding: 4px 10px; border-radius: 6px; display: flex; align-items: center; gap: 6px; }
+    .video-label .rec { width: 7px; height: 7px; border-radius: 50%; background: var(--rose); animation: pulse 1.4s infinite; }
+
+    /* ---------- Pipeline ---------- */
+    .flow { display: flex; flex-direction: column; gap: 0.55rem; }
+    .flow-node {
+      display: flex; align-items: center; gap: 0.9rem; padding: 0.85rem 1rem; border-radius: 12px;
+      background: rgba(13,17,22,.6); border: 1px solid rgba(43,53,64,.8); cursor: pointer; transition: all .25s ease;
+    }
+    .flow-node:hover, .flow-node.active { border-color: var(--border-glow); background: rgba(255,122,47,.08); transform: translateX(6px); }
+    .flow-num { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 700; font-size: 0.9rem; color: #0A0D11; flex: none; }
+    .flow-node h4 { font-size: 0.92rem; font-weight: 700; }
+    .flow-node p { font-size: 0.76rem; color: var(--text-muted); margin-top: 2px; }
+    .flow-arrow { text-align: center; color: var(--orange); opacity: .6; font-size: 0.8rem; }
+
+    /* ---------- Code ---------- */
+    .code-panel { background: rgba(8,11,15,.92); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.1rem 1.2rem; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.62; overflow: auto; color: #c8d0d8; flex: 1; }
+    .code-panel .cm { color: #5b6875; }
+    .code-panel .kw { color: #ff9d5c; }
+    .code-panel .fn { color: #ffd08a; }
+    .code-panel .st { color: #a3e635; }
+    .code-panel .nm { color: #7dd3fc; }
+    .code-head { display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.7rem; margin-bottom: 0.7rem; border-bottom: 1px solid rgba(43,53,64,.8); font-size: 0.75rem; color: var(--text-muted); }
+    .code-head .dots { display: flex; gap: 5px; }
+    .code-head .dots i { width: 10px; height: 10px; border-radius: 50%; background: #2b3540; display: block; }
+    .code-head .dots i:first-child { background: var(--copper); }
+
+    /* ---------- Widgets ---------- */
+    .widget { background: rgba(8,11,15,.6); border: 1px solid var(--border-color); border-radius: 14px; padding: 1.1rem; margin-top: 0.9rem; }
+    .widget-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: var(--orange); margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
+    .slider-row { margin-bottom: 0.7rem; }
+    .slider-row label { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+    .slider-row label b { font-family: var(--font-mono); color: var(--text-main); }
+    input[type=range] { width: 100%; -webkit-appearance: none; appearance: none; height: 5px; border-radius: 4px; background: linear-gradient(90deg, var(--copper), var(--orange)); outline: none; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 17px; height: 17px; border-radius: 50%; background: var(--text-main); border: 3px solid var(--orange); cursor: pointer; box-shadow: 0 0 10px rgba(255,122,47,.6); }
+    .calc-out { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin-top: 0.9rem; }
+    .calc-cell { background: rgba(13,17,22,.7); border: 1px solid rgba(43,53,64,.8); border-radius: 10px; padding: 0.7rem 0.85rem; }
+    .calc-cell .lbl { font-size: 0.68rem; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px; }
+    .calc-cell .val { font-family: var(--font-mono); font-size: 1.35rem; font-weight: 700; color: var(--orange); }
+    .calc-cell .val small { font-size: 0.72rem; color: var(--text-muted); font-weight: 400; }
+
+    .verdict-box { margin-top: 0.9rem; border-radius: 12px; padding: 1rem 1.2rem; display: flex; align-items: center; gap: 1rem; border: 1px solid; transition: all .35s ease; }
+    .verdict-box.low { border-color: rgba(34,197,94,.5); background: linear-gradient(90deg, rgba(34,197,94,.15), rgba(34,197,94,.03)); }
+    .verdict-box.high { border-color: rgba(239,68,68,.55); background: linear-gradient(90deg, rgba(239,68,68,.16), rgba(239,68,68,.03)); }
+    .verdict-box .word { font-family: var(--font-heading); font-size: 1.7rem; font-weight: 900; letter-spacing: 0.5px; }
+    .verdict-box.low .word { color: var(--emerald); }
+    .verdict-box.high .word { color: var(--rose); }
+    .verdict-box .detail { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+    .verdict-box .conf { margin-left: auto; text-align: right; }
+    .verdict-box .conf b { font-family: var(--font-mono); font-size: 1.3rem; }
+    .verdict-box .conf span { display: block; font-size: 0.62rem; letter-spacing: 1.6px; color: var(--text-dim); }
+
+    .check-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.9rem; }
+    .check-row { display: flex; align-items: center; gap: 0.7rem; padding: 0.55rem 0.8rem; border-radius: 9px; background: rgba(13,17,22,.55); border: 1px solid rgba(43,53,64,.7); font-size: 0.8rem; transition: all .3s ease; }
+    .check-row .st { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; flex: none; }
+    .check-row.ok .st { background: rgba(34,197,94,.16); color: var(--emerald); border: 1.4px solid rgba(34,197,94,.5); }
+    .check-row.bad .st { background: rgba(239,68,68,.16); color: var(--rose); border: 1.4px solid rgba(239,68,68,.5); }
+    .check-row.bad { border-color: rgba(239,68,68,.45); }
+    .check-row .v { margin-left: auto; font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-muted); }
+
+    .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 0.4rem; }
+    .metric { background: rgba(13,17,22,.6); border: 1px solid rgba(43,53,64,.8); border-radius: 12px; padding: 0.9rem 1rem; }
+    .metric .lbl { font-size: 0.7rem; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; }
+    .metric .nums { display: flex; align-items: baseline; gap: 0.5rem; font-family: var(--font-mono); }
+    .metric .before { font-size: 0.82rem; color: var(--text-dim); text-decoration: line-through; }
+    .metric .after { font-size: 1.25rem; font-weight: 700; color: var(--orange); }
+    .metric .chg { font-size: 0.72rem; font-weight: 700; color: var(--emerald); margin-left: auto; }
+
+    /* ---------- Summary ---------- */
+    .summary { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 1rem; }
+    .summary h1 { font-family: var(--font-heading); font-size: 2.6rem; font-weight: 900; letter-spacing: -0.5px; }
+    .summary h1 span { color: var(--orange); }
+    .summary .sub { color: var(--text-muted); font-size: 1rem; }
+    .takeaways { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; max-width: 980px; margin-top: 0.5rem; }
+    .takeaway { display: flex; align-items: flex-start; gap: 0.7rem; text-align: left; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 0.85rem 1rem; font-size: 0.83rem; color: #dfe3e6; }
+    .takeaway i { color: var(--emerald); margin-top: 0.15rem; }
+    .summary-links { display: flex; gap: 0.8rem; margin-top: 0.6rem; flex-wrap: wrap; justify-content: center; }
+    .summary-links a { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.78rem; color: var(--orange); background: rgba(255,122,47,.1); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 10px; text-decoration: none; transition: all .2s; }
+    .summary-links a:hover { background: rgba(255,122,47,.2); transform: translateY(-2px); }
+    .qa-badge { margin-top: 0.4rem; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1.1rem; border-radius: 20px; background: rgba(139,92,246,.12); border: 1px solid rgba(139,92,246,.4); color: #c4b5fd; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; }
+
+    /* ---------- Footer ---------- */
+    .footer-bar {
+      display: flex; align-items: center; justify-content: space-between; gap: 1.2rem;
+      padding: 0.75rem 2rem; background: rgba(10,13,17,.92); border-top: 1px solid var(--border-color); z-index: 100;
+    }
+    .nav-btn { display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 0.5rem 1.1rem; border-radius: 10px; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all .2s; font-family: var(--font-body); }
+    .nav-btn:hover:not(:disabled) { background: rgba(255,122,47,.16); border-color: var(--orange); color: var(--orange); }
+    .nav-btn:disabled { opacity: .35; cursor: not-allowed; }
+    .thumbs { display: flex; gap: 0.35rem; flex-wrap: wrap; justify-content: center; }
+    .thumb { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(255,255,255,.03); color: var(--text-muted); font-family: var(--font-mono); font-size: 0.75rem; cursor: pointer; transition: all .2s; }
+    .thumb:hover { border-color: var(--orange); color: var(--orange); }
+    .thumb.active { background: var(--orange); color: #0A0D11; border-color: var(--orange); font-weight: 700; }
+    .kbd-hint { font-size: 0.72rem; color: var(--text-dim); display: flex; gap: 0.7rem; align-items: center; }
+    .kbd { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); border-radius: 5px; padding: 1px 6px; font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted); }
+
+    .progress-track { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: rgba(43,53,64,.6); z-index: 120; }
+    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--copper), var(--orange)); transition: width .4s ease; }
+
+    .slide-watermark { position: absolute; bottom: 6px; right: 14px; font-size: 0.62rem; letter-spacing: 2px; color: rgba(154,166,178,.35); text-transform: uppercase; pointer-events: none; }
+    .slide-number { position: absolute; bottom: 6px; left: 14px; font-family: var(--font-mono); font-size: 0.66rem; color: rgba(154,166,178,.35); letter-spacing: 1px; pointer-events: none; }
+
+    /* ---------- Notes ---------- */
+    .notes-panel {
+      position: fixed; left: 1.5rem; bottom: 5.2rem; width: 460px; max-height: 40vh; overflow: auto;
+      background: rgba(10,13,17,.96); border: 1px solid var(--border-color); border-radius: 14px; padding: 1rem 1.1rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,.55); z-index: 200; display: none;
+    }
+    .notes-panel.show { display: block; }
+    .notes-panel h5 { font-size: 0.72rem; letter-spacing: 1.6px; text-transform: uppercase; color: var(--orange); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+    .notes-panel p { font-size: 0.84rem; line-height: 1.55; color: #cfd6db; }
+
+    /* ---------- Drawer ---------- */
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(5,7,10,.75); backdrop-filter: blur(6px); z-index: 300; display: none; align-items: center; justify-content: center; }
+    .drawer-overlay.show { display: flex; }
+    .drawer { width: min(1080px, 92vw); max-height: 84vh; overflow: auto; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 20px; padding: 1.6rem; }
+    .drawer h3 { font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; }
+    .drawer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; }
+    .drawer-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 0.9rem; cursor: pointer; transition: all .2s; }
+    .drawer-card:hover { border-color: var(--border-glow); transform: translateY(-3px); }
+    .drawer-card.active { border-color: var(--orange); background: rgba(255,122,47,.1); }
+    .drawer-card .n { font-family: var(--font-mono); font-size: 0.7rem; color: var(--orange); margin-bottom: 0.4rem; }
+    .drawer-card h4 { font-size: 0.84rem; font-weight: 700; line-height: 1.3; }
+    .drawer-card p { font-size: 0.68rem; color: var(--text-dim); margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="app-container">
+    <header>
+      <div class="brand">
+        <div class="brand-mark"><div class="ring"></div><div class="slash"></div></div>
+        <div class="brand-text">
+          <h1>Tryout<span>Zero</span></h1>
+          <p>Check the die before it is cut</p>
+        </div>
+      </div>
+      <div class="header-center">
+        <div class="status-badge"><span class="status-dot"></span>ADVISOR ENGINE: LIVE</div>
+        <div class="slide-indicator" id="slideIndicator">01 / 08</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-icon" id="notesBtn" title="Toggle Presenter Notes (N)"><i class="fa-solid fa-book-open"></i></button>
+        <button class="btn-icon" id="drawerBtn" title="Slide Overview (O)"><i class="fa-solid fa-grip"></i></button>
+        <button class="btn-icon" id="fullBtn" title="Fullscreen (F)"><i class="fa-solid fa-expand"></i></button>
+      </div>
+    </header>
+
+    <main>
+      <!-- 1. HERO -->
+      <section class="slide active" data-notes="Welcome everyone to ShopTalk! Today we look at how a small press tool room can check a sheet-metal part before the die is made — using a rules engine grounded in real shop language: blank, draw, thinning, wrinkling, springback, tonnage, nesting. TryoutZero is decision support, never a replacement for tryout.">
+        <div class="hero">
+          <div class="hero-mark"><div class="ring"></div><div class="slash"></div></div>
+          <div class="hero-eyebrow">ShopTalk 2026 • Bangalore, India</div>
+          <h1 class="hero-title">Check the Die <span>Before It Is Cut</span></h1>
+          <p class="hero-sub">TryoutZero is a browser-based advisor for small press tool rooms — it checks a sheet-metal part before the die is made, estimates the blank and the cost, and learns from tryout results.</p>
+          <div style="display:flex;gap:0.9rem;flex-wrap:wrap;justify-content:center">
+            <div class="hero-presenter">
+              <img src="./kishore-photo.jpg" alt="Kishore Ravi">
+              <div>
+                <div class="name">Kishore Ravi</div>
+                <div class="role">AI Software Engineer & Tool Engineer • NTTF Tool Engineering</div>
+              </div>
+            </div>
+            <div class="hero-presenter">
+              <img src="./amogh-photo.jpg" alt="Sai Amogh D K">
+              <div>
+                <div class="name">Sai Amogh D K</div>
+                <div class="role">Tool Engineering Student at NTTF NEC • Co-builder of TryoutZero</div>
+              </div>
+            </div>
+          </div>
+          <div class="hero-chips">
+            <div class="chip"><i class="fa-solid fa-shield-halved"></i> <b>9</b> rule sets</div>
+            <div class="chip"><i class="fa-solid fa-flask-vial"></i> <b>153</b> pytest cases</div>
+            <div class="chip"><i class="fa-solid fa-film"></i> <b>4</b> demo videos</div>
+            <div class="chip"><i class="fa-solid fa-magnifying-glass-chart"></i> <b>100%</b> auditable</div>
+            <div class="chip"><i class="fa-solid fa-stamp"></i> Human-check, always</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. PROBLEM -->
+      <section class="slide" data-notes="Set up the pain. In a small press tool room the die is manufactured first and validated during tryout on the press. Each failed tryout loop means welding, re-machining or scrapping die steel. Ask the audience how many of their shops still hand-calculate springback.">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-triangle-exclamation"></i> The Problem</div>
+          <h2 class="slide-title">The Die Tryout Problem</h2>
+          <p class="slide-subtitle">Why tool rooms discover their mistakes only after cutting steel</p>
+        </div>
+        <div class="slide-body">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-screwdriver-wrench"></i> What goes wrong today</div>
+            <ul class="bullet-list">
+              <li class="bullet-item"><i class="fa-solid fa-hammer"></i><span>The die is cut first and the problems show up during tryout — every loop costs weeks of machine time and rework.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-user-graduate"></i><span>Skilled die setters are scarce; tribal knowledge lives in heads and paper notes, not in checkable rules.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-calculator"></i><span>Blank estimation, thinning and springback are hand-calculated — one wrong inner radius scraps a complete die.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-file-invoice-dollar"></i><span>Quotes are gut-feel: strip nesting, sheet plan, material and tool cost guessed under deadline pressure.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-rotate"></i><span>Tryout learnings are lost — the same mistake is paid for again on the next die.</span></li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-money-bill-trend-up"></i> The cost of one failed loop</div>
+            <div class="metric-grid">
+              <div class="metric"><div class="lbl">Machine time</div><div class="nums"><span class="after">Weeks</span></div></div>
+              <div class="metric"><div class="lbl">Die steel</div><div class="nums"><span class="after">Re-machine</span></div></div>
+              <div class="metric"><div class="lbl">Press hours</div><div class="nums"><span class="after">Burned</span></div></div>
+              <div class="metric"><div class="lbl">Fixes</div><div class="nums"><span class="after">Manual</span></div></div>
+            </div>
+            <div class="widget" style="margin-top:1rem">
+              <div class="widget-title"><i class="fa-solid fa-lightbulb"></i> The flip</div>
+              <div style="font-size:0.88rem;line-height:1.6;color:#dfe3e6">
+                Instead of <b style="color:var(--text-muted)">cut → tryout → discover</b>, TryoutZero does
+                <b style="color:var(--orange)">check → decide → cut once</b>. The verdict arrives before any metal is removed.
+              </div>
+              <div class="verdict-box low" style="margin-top:0.9rem">
+                <div class="word">BEFORE CUT</div>
+                <div class="detail">Every check runs on the part file,<br>in shop language, in seconds.</div>
+                <div class="conf"><b>Live</b><span>ENGINE</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. PIPELINE -->
+      <section class="slide" data-notes="Walk the pipeline end to end. Emphasize the honesty principle: verdicts use the words low / medium / high risk and are always flagged for human check. Never approved, never guaranteed. Every default rule value remains to be verified by the mechanical lead.">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-diagram-project"></i> Architecture</div>
+          <h2 class="slide-title">The TryoutZero Pipeline</h2>
+          <p class="slide-subtitle">From part file to verdict to a workshop that learns with every die</p>
+        </div>
+        <div class="slide-body">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-route"></i> End-to-end flow</div>
+            <div class="flow" id="flow">
+              <div class="flow-node active" data-i="0">
+                <div class="flow-num" style="background:#FF7A2F">1</div>
+                <div><h4>Part Upload</h4><p>STL / STEP / DXF with unit detection &amp; plain-language validation</p></div>
+              </div>
+              <div class="flow-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+              <div class="flow-node" data-i="1">
+                <div class="flow-num" style="background:#C25A1C">2</div>
+                <div><h4>File Intelligence</h4><p>Holes, cut perimeter and flat pattern extracted from the mesh</p></div>
+              </div>
+              <div class="flow-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+              <div class="flow-node" data-i="2">
+                <div class="flow-num" style="background:#f59e0b">3</div>
+                <div><h4>Forming Rules Engine</h4><p>Bend, draw, thinning, springback, clearance, tonnage — pure functions</p></div>
+              </div>
+              <div class="flow-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+              <div class="flow-node" data-i="3">
+                <div class="flow-num" style="background:#22c55e">4</div>
+                <div><h4>Verdicts &amp; Quote</h4><p>Risk bands with confidence, blank size, strip nesting, cost sheet</p></div>
+              </div>
+              <div class="flow-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+              <div class="flow-node" data-i="4">
+                <div class="flow-num" style="background:#8b5cf6">5</div>
+                <div><h4>Tryout &amp; Calibration</h4><p>Defect photos → correction factors → smarter checks, this workshop only</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-circle-info" id="flowIcon"></i> <span id="flowTitle">Part Upload</span></div>
+            <div id="flowDetail" style="font-size:0.9rem;line-height:1.65;color:#dfe3e6"></div>
+            <div class="widget" style="margin-top:auto">
+              <div class="widget-title"><i class="fa-solid fa-scale-balanced"></i> The honesty rule</div>
+              <div style="font-size:0.86rem;line-height:1.6;color:var(--text-muted)">
+                Verdicts use <b style="color:var(--text-main)">low / medium / high risk</b> with a confidence level and are
+                <b style="color:var(--orange)">always flagged for human check</b>. Never “approved”, never “guaranteed”.
+                All default rule values remain <b style="color:var(--text-main)">“to be verified by the mechanical lead”</b>.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. RULES + CALCULATOR -->
+      <section class="slide" data-notes="Show the honesty of the engineering: cutting force F = L x t x tau, then tonnage with a safety factor from the parameters table. Every value is auditable and pending mechanical-lead verification. This is decision support built on mechanics, not a black box.">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-code"></i> Under the hood</div>
+          <h2 class="slide-title">A Rules Engine You Can Audit</h2>
+          <p class="slide-subtitle">Pure functions, real sheet-metal mechanics, parameters injected — nothing hard-coded</p>
+        </div>
+        <div class="slide-body">
+          <div class="card">
+            <div class="card-title"><i class="fa-brands fa-python"></i> backend/app/rules/blanking.py</div>
+            <div class="code-panel">
+              <div class="code-head"><span class="dots"><i></i><i></i><i></i></span> rules engine · pure functions, no web code</div>
+<span class="kw">import</span> math
+
+<span class="kw">def</span> <span class="fn">blanking_force_kn</span>(perimeter_mm, thickness_mm, shear_strength_mpa):
+    <span class="st">"""
+    Cutting (blanking) force: F = L x t x tau
+
+    L = cut perimeter in mm, t = sheet thickness in mm,
+    tau = shear strength in MPa (N/mm^2). Returns force in kN.
+    """</span>
+    <span class="kw">return</span> perimeter_mm * thickness_mm * shear_strength_mpa / <span class="nm">1000.0</span>
+
+<span class="kw">def</span> <span class="fn">press_tonnage</span>(force_kn, safety_factor):
+    <span class="st">"""
+    Press tonnage from force in kN: tonnes = kN / 9.81,
+    then times the safety factor from the parameters table.
+    """</span>
+    <span class="kw">return</span> force_kn / <span class="nm">9.81</span> * safety_factor
+            </div>
+            <div class="widget" style="margin-top:0.9rem">
+              <div class="widget-title"><i class="fa-solid fa-gauge-high"></i> Try the tonnage calculator</div>
+              <div class="slider-row"><label>Cut perimeter L <b><span id="lVal">318</span> mm</b></label><input type="range" id="lSlider" min="100" max="600" value="318" step="1"></div>
+              <div class="slider-row"><label>Thickness t <b><span id="tVal">1.5</span> mm</b></label><input type="range" id="tSlider" min="0.5" max="3" value="1.5" step="0.1"></div>
+              <div class="slider-row"><label>Shear strength τ <b><span id="sVal">320</span> MPa</b></label><input type="range" id="sSlider" min="180" max="480" value="320" step="5"></div>
+              <div class="slider-row"><label>Safety factor <b><span id="fVal">1.15</span></b></label><input type="range" id="fSlider" min="1" max="1.6" value="1.15" step="0.05"></div>
+              <div class="calc-out">
+                <div class="calc-cell"><div class="lbl">Cutting force</div><div class="val"><span id="forceOut">152.6</span> <small>kN</small></div></div>
+                <div class="calc-cell"><div class="lbl">Press tonnage</div><div class="val"><span id="tonOut">17.9</span> <small>T</small></div></div>
+                <div class="calc-cell" style="grid-column:1/-1"><div class="lbl">Catalog match</div><div class="val" style="font-size:1.05rem"><span id="pressOut">C-frame 20 T</span></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="video-card">
+              <div class="video-label"><span class="rec"></span> Demo · rules engine</div>
+              <video src="./tryoutzero_demo_rules.mp4" controls autoplay loop muted playsinline></video>
+            </div>
+            <ul class="bullet-list" style="margin-top:1rem">
+              <li class="bullet-item"><i class="fa-solid fa-vial"></i><span>Every rule is a hand-calculated pure function — <b>153 pytest cases</b> cover each rule and operation.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-table-list"></i><span>Rule parameters live in an editable, auditable table; literature values become candidates only after the mechanical lead verifies them.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-list-check"></i><span>Punch-die clearance, bend thinning, springback, limiting draw ratio, blank holder force — all traceable to rule, value and limit.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-robot"></i><span>No ML in Phase 1: AI sits on defect photos, drawing reading and explanation phrasing, constrained to a fixed defect list with confidence.</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. VERDICT SIMULATOR -->
+      <section class="slide" data-notes="Live demo moment: run the demo bracket, expected LOW RISK with inner radius 5 mm against the 1.5 mm limit and 15.5% thinning against 20%. Edit the radius to 0.5 mm — HIGH RISK appears with the minimal change that fixes it, and the coupled thinning check shows about 50% thinning.">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-clipboard-check"></i> Demo bracket</div>
+          <h2 class="slide-title">The Verdict Flips in One Edit</h2>
+          <p class="slide-subtitle">90° bracket · 1.5 mm IS 513 CRCA · legs 50 × 40 mm — drag the radius and watch the risk</p>
+        </div>
+        <div class="slide-body">
+          <div class="card">
+            <div class="video-card">
+              <div class="video-label"><span class="rec"></span> Demo · upload → file check → verdict</div>
+              <video src="./tryoutzero_demo_check.mp4" controls autoplay loop muted playsinline></video>
+            </div>
+            <div class="widget">
+              <div class="widget-title"><i class="fa-solid fa-sliders"></i> Inner bend radius</div>
+              <div class="slider-row"><label>Inner radius <b><span id="rVal">5.0</span> mm</b></label><input type="range" id="rSlider" min="0.5" max="8" value="5" step="0.1"></div>
+              <div class="check-list">
+                <div class="check-row ok" id="chkRadius"><span class="st">✓</span><span>Minimum bend radius — inner R5.0 vs limit 1.5 mm</span><span class="v" id="chkRadiusV">PASS · 3.3× margin</span></div>
+                <div class="check-row ok" id="chkThin"><span class="st">✓</span><span>Bend thinning — estimated vs 20% limit</span><span class="v" id="chkThinV">15.5% PASS</span></div>
+                <div class="check-row ok" id="chkClr"><span class="st">✓</span><span>Punch-die clearance — 7% of t per side</span><span class="v">0.105 mm</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-scroll"></i> Verdict — engine output</div>
+            <div class="verdict-box low" id="verdictBox">
+              <div class="word" id="verdictWord">LOW RISK</div>
+              <div class="detail" id="verdictDetail">All forming checks pass.<br>Flagged for human check — never “approved”.</div>
+              <div class="conf"><b id="verdictConf">87%</b><span>CONFIDENCE</span></div>
+            </div>
+            <div id="fixLine" style="display:none;margin-top:0.9rem;padding:0.7rem 0.9rem;border-radius:10px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.35);font-family:var(--font-mono);font-size:0.78rem;color:#fca5a5">
+              → smallest fix: raise inner radius to <b style="color:var(--orange)">≥ 1.5 mm</b>
+            </div>
+            <div class="widget" style="margin-top:1rem">
+              <div class="widget-title"><i class="fa-solid fa-ruler-combined"></i> Unfolded blank · bend allowance</div>
+              <div class="calc-out">
+                <div class="calc-cell"><div class="lbl">Blank length</div><div class="val">85.63 <small>mm</small></div></div>
+                <div class="calc-cell"><div class="lbl">Blank width</div><div class="val">30.00 <small>mm</small></div></div>
+                <div class="calc-cell"><div class="lbl">Sheet</div><div class="val">1.5 <small>mm</small></div></div>
+                <div class="calc-cell"><div class="lbl">Clearance</div><div class="val">0.105 <small>mm</small></div></div>
+              </div>
+            </div>
+            <div style="margin-top:auto;padding-top:0.9rem;font-size:0.8rem;color:var(--text-muted)">
+              The verdict speaks shop language and always shows the <b style="color:var(--text-main)">rule, value and limit</b> behind it.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. PRESS DEMO -->
+      <section class="slide" data-notes="Enter a blanking job and see which demo press can run it, then watch the real-time simulation. Match against a 5-500 T catalog with tonnage bands and bed fit. The ram stalls if the job overloads the selected machine — then rematch.">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-industry"></i> Press demo</div>
+          <h2 class="slide-title">Match the Job to the Machine</h2>
+          <p class="slide-subtitle">50 press operations sized against a demo catalog — the ram stalls if the job overloads the press</p>
+        </div>
+        <div class="slide-body">
+          <div class="card">
+            <div class="video-card">
+              <div class="video-label"><span class="rec"></span> Demo · real-time press simulation</div>
+              <video src="./tryoutzero_demo_press.mp4" controls autoplay loop muted playsinline></video>
+            </div>
+            <div class="metric-grid" style="margin-top:1rem">
+              <div class="metric"><div class="lbl">Risk call</div><div class="nums"><span class="before">After tryout</span><span class="after">Before cut</span></div></div>
+              <div class="metric"><div class="lbl">Rule coverage</div><div class="nums"><span class="after">9 rule sets</span></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-list-check"></i> What the simulation shows</div>
+            <ul class="bullet-list">
+              <li class="bullet-item"><i class="fa-solid fa-gears"></i><span>50 press operations — cutting, bending, drawing, pressure, joining — sized and matched against a 5–500 T catalog with tonnage bands and bed fit.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-cube"></i><span>2D side view + tool path, and a 3D press built from the shop's own CAD press models (STEP → STL, H-frame and C-frame).</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-triangle-exclamation"></i><span>The ram stalls if the job overloads the selected machine — then TryoutZero matches the next press in the catalog.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-unlock"></i><span>No sign-in needed: open <b>Press Machine Demo</b> from the landing page, or one-click the demo bracket numbers.</span></li>
+            </ul>
+            <div class="widget" style="margin-top:auto">
+              <div class="widget-title"><i class="fa-solid fa-chart-line"></i> Why it matters</div>
+              <div style="font-size:0.86rem;line-height:1.6;color:var(--text-muted)">
+                Most die damage and tryout loops come from <b style="color:var(--orange)">wrong-machine calls</b> — a job sized for the
+                wrong tonnage band. Matching on the screen before the run removes the guesswork.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. VISION + CALIBRATION -->
+      <section class="slide" data-notes="Explain the learning loop. A recorded tryout with measured thinning makes the advisor propose a shop calibration factor. Confirm it and future checks in that workshop use it. The predicted-vs-actual ledger closes the trust loop. AI is constrained: fixed defect list, confidence, unsure allowed, never invents numbers.">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-eye"></i> Vision &amp; learning</div>
+          <h2 class="slide-title">AI Vision &amp; the Calibration Loop</h2>
+          <p class="slide-subtitle">The shop gets smarter with every die it runs</p>
+        </div>
+        <div class="slide-body">
+          <div class="card">
+            <div class="video-card">
+              <div class="video-label"><span class="rec"></span> Demo · defect diagnosis &amp; calibration</div>
+              <video src="./tryoutzero_demo_vision.mp4" controls autoplay loop muted playsinline></video>
+            </div>
+            <div class="widget">
+              <div class="widget-title"><i class="fa-solid fa-diagram-successor"></i> Calibration in three steps</div>
+              <div class="bullet-list">
+                <div class="bullet-item"><i class="fa-solid fa-1"></i><span><b>Record</b> — tryout measurements: thinning 23.1% vs predicted 18.4%, springback 2.8° vs 2.2°.</span></div>
+                <div class="bullet-item"><i class="fa-solid fa-2"></i><span><b>Propose</b> — advisor suggests correction factor × 1.04 for this workshop.</span></div>
+                <div class="bullet-item"><i class="fa-solid fa-3"></i><span><b>Confirm</b> — applies to your workshop only; predicted-vs-actual ledger updates.</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-microchip"></i> Applied AI, constrained</div>
+            <ul class="bullet-list">
+              <li class="bullet-item"><i class="fa-solid fa-camera"></i><span>Defect photo diagnosis on any OpenAI-compatible endpoint — NVIDIA NIM <b>Llama-3.2-11B-Vision</b> as the tested default.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-shield-halved"></i><span>Constrained AI: fixed defect list, confidence score, allowed to say <b>unsure</b> — never invents numbers.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-pen-ruler"></i><span>Component-drawing reader and AI report summary — engine numbers only, flagged for human check.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-history"></i><span>Die history timeline and consent flag for the improvement dataset keep every verdict auditable after production.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-plug-circle-xmark"></i><span>Degrades honestly: without credentials the vision features report <b>switched off</b> — the rules engine still runs.</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. SUMMARY -->
+      <section class="slide" data-notes="Conclude: TryoutZero is decision support, never a replacement for tryout. Every verdict is flagged for human check and every default stays pending mechanical-lead verification. Invite questions and open the standalone live demo with the 3D press simulation.">
+        <div class="summary">
+          <h1>Check the Die <span>Before It Is Cut</span></h1>
+          <p class="sub">TryoutZero · decision support for small press tool rooms</p>
+          <div class="takeaways">
+            <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>Verdicts before metal is cut — low / medium / high risk with the exact rule, value and limit behind every call.</span></div>
+            <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>Pure-function rules engine: F = L × t × τ blanking force and tonnage sizing — every parameter auditable.</span></div>
+            <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>Real-time press simulation with a ram that stalls on overload; 2D tool path plus a 3D press from the shop's CAD.</span></div>
+            <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>The shop gets smarter with every die: confirmed correction factors apply to that workshop only.</span></div>
+          </div>
+          <div class="summary-links">
+            <a href="./tryoutzero-presentation.html"><i class="fa-solid fa-play"></i> Replay this presentation</a>
+            <a href="/"><i class="fa-solid fa-house"></i> Back to Shop-Talks</a>
+          </div>
+          <div class="qa-badge"><i class="fa-solid fa-comments"></i> Q&amp;A OPEN — Kishore Ravi & Sai Amogh D K</div>
+        </div>
+      </section>
+
+      <div class="slide-number" id="slideNumber">SLIDE 01 / 08</div>
+      <div class="slide-watermark">SHOP-TALKS • TryoutZero ShopTalk 2026</div>
+    </main>
+
+    <footer class="footer-bar">
+      <button class="nav-btn" id="prevBtn"><i class="fa-solid fa-chevron-left"></i> Previous</button>
+      <div class="thumbs" id="thumbs"></div>
+      <div class="kbd-hint">
+        <span><span class="kbd">←</span> <span class="kbd">→</span> Navigate</span>
+        <span><span class="kbd">N</span> Notes</span>
+        <span><span class="kbd">O</span> Overview</span>
+        <span><span class="kbd">F</span> Fullscreen</span>
+        <span><span class="kbd">Esc</span> Close</span>
+      </div>
+      <button class="nav-btn" id="nextBtn">Next <i class="fa-solid fa-chevron-right"></i></button>
+    </footer>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div class="notes-panel" id="notesPanel">
+    <h5><i class="fa-solid fa-book-open"></i> Presenter notes — <span id="notesSlide">Slide 1</span></h5>
+    <p id="notesText"></p>
+  </div>
+
+  <div class="drawer-overlay" id="drawerOverlay">
+    <div class="drawer">
+      <h3><span><i class="fa-solid fa-grip" style="color:var(--orange)"></i> Slide Overview</span><button class="btn-icon" id="drawerClose"><i class="fa-solid fa-xmark"></i></button></h3>
+      <div class="drawer-grid" id="drawerGrid"></div>
+    </div>
+  </div>
+
+  <script>
+    /* ============ Ambient particle background ============ */
+    const cv = document.getElementById('bg-canvas');
+    const ctx = cv.getContext('2d');
+    let W, H, parts = [];
+    function resize() {
+      W = cv.width = window.innerWidth; H = cv.height = window.innerHeight;
+      parts = Array.from({ length: 70 }, () => ({
+        x: Math.random() * W, y: Math.random() * H,
+        r: Math.random() * 2.4 + 0.6, s: Math.random() * 0.35 + 0.06,
+        o: Math.random() * 0.4 + 0.08, d: Math.random() * Math.PI * 2
+      }));
+    }
+    function drawBg() {
+      ctx.clearRect(0, 0, W, H);
+      const g = ctx.createRadialGradient(W * 0.75, -H * 0.1, 0, W * 0.75, -H * 0.1, H * 1.2);
+      g.addColorStop(0, 'rgba(194,90,28,0.16)'); g.addColorStop(0.5, 'rgba(13,17,22,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      parts.forEach(p => {
+        p.y -= p.s; p.d += 0.01;
+        if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
+        const dx = Math.sin(p.d) * 12;
+        const grad = ctx.createRadialGradient(p.x + dx, p.y, 0, p.x + dx, p.y, p.r * 6);
+        grad.addColorStop(0, `rgba(255,122,47,${p.o})`); grad.addColorStop(1, 'rgba(255,122,47,0)');
+        ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(p.x + dx, p.y, p.r * 6, 0, Math.PI * 2); ctx.fill();
+      });
+      requestAnimationFrame(drawBg);
+    }
+    resize(); window.addEventListener('resize', resize); drawBg();
+
+    /* ============ Slide engine ============ */
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const thumbs = document.getElementById('thumbs');
+    const drawerGrid = document.getElementById('drawerGrid');
+    const titles = ['Check the Die Before It Is Cut', 'The Die Tryout Problem', 'The TryoutZero Pipeline', 'A Rules Engine You Can Audit', 'The Verdict Flips in One Edit', 'Match the Job to the Machine', 'AI Vision & the Calibration Loop', 'Check the Die Before It Is Cut'];
+    let cur = 0;
+
+    slides.forEach((_, i) => {
+      const b = document.createElement('button');
+      b.className = 'thumb'; b.textContent = String(i + 1).padStart(2, '0');
+      b.onclick = () => goTo(i); thumbs.appendChild(b);
+
+      const c = document.createElement('div');
+      c.className = 'drawer-card'; c.dataset.i = i;
+      c.innerHTML = `<div class="n">SLIDE ${String(i + 1).padStart(2, '0')}</div><h4>${titles[i]}</h4><p>${i === 7 ? 'Q&A and takeaways' : 'TryoutZero ShopTalk'}</p>`;
+      c.onclick = () => { goTo(i); toggleDrawer(false); }; drawerGrid.appendChild(c);
+    });
+
+    function pauseAllVideos() { document.querySelectorAll('video').forEach(v => v.pause()); }
+
+    function goTo(i) {
+      cur = Math.max(0, Math.min(slides.length - 1, i));
+      slides.forEach((s, k) => s.classList.toggle('active', k === cur));
+      Array.from(thumbs.children).forEach((t, k) => t.classList.toggle('active', k === cur));
+      Array.from(drawerGrid.children).forEach((d, k) => d.classList.toggle('active', k === cur));
+      document.getElementById('slideIndicator').textContent = String(cur + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
+      document.getElementById('slideNumber').textContent = 'SLIDE ' + String(cur + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
+      document.getElementById('progressFill').style.width = ((cur + 1) / slides.length * 100) + '%';
+      document.getElementById('prevBtn').disabled = cur === 0;
+      document.getElementById('nextBtn').disabled = cur === slides.length - 1;
+      // play video on active slide only
+      pauseAllVideos();
+      const v = slides[cur].querySelector('video'); if (v) { v.currentTime = 0; v.play().catch(() => {}); }
+      updateNotes();
+    }
+    const next = () => goTo(cur + 1), prev = () => goTo(cur - 1);
+    document.getElementById('nextBtn').onclick = next;
+    document.getElementById('prevBtn').onclick = prev;
+
+    /* ============ Notes & drawer ============ */
+    const notesPanel = document.getElementById('notesPanel');
+    function updateNotes() {
+      document.getElementById('notesText').textContent = slides[cur].dataset.notes || 'No specific notes.';
+      document.getElementById('notesSlide').textContent = 'Slide ' + (cur + 1);
+    }
+    function toggleNotes() { notesPanel.classList.toggle('show'); notesPanel.style.display = notesPanel.classList.contains('show') ? 'block' : 'none'; }
+    document.getElementById('notesBtn').onclick = toggleNotes;
+
+    const drawerOverlay = document.getElementById('drawerOverlay');
+    function toggleDrawer(force) {
+      const show = force === undefined ? !drawerOverlay.classList.contains('show') : force;
+      drawerOverlay.classList.toggle('show', show);
+    }
+    document.getElementById('drawerBtn').onclick = () => toggleDrawer();
+    document.getElementById('drawerClose').onclick = () => toggleDrawer(false);
+    drawerOverlay.onclick = (e) => { if (e.target === drawerOverlay) toggleDrawer(false); };
+
+    /* ============ Fullscreen ============ */
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    }
+    document.getElementById('fullBtn').onclick = toggleFullscreen;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+      else if (e.key === 'n' || e.key === 'N') toggleNotes();
+      else if (e.key === 'o' || e.key === 'O') toggleDrawer();
+      else if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+      else if (e.key === 'Escape') { toggleDrawer(false); }
+      else if (e.key === 'Home') goTo(0);
+      else if (e.key === 'End') goTo(slides.length - 1);
+    });
+
+    /* ============ Pipeline interaction ============ */
+    const flowData = [
+      { icon: 'fa-solid fa-upload', title: 'Part Upload', html: 'Upload an STL, STEP or DXF part and TryoutZero detects units and validates it in plain language. Nothing is checked against a black box — the file is parsed and the geometry is measured.' },
+      { icon: 'fa-solid fa-shapes', title: 'File Intelligence', html: 'Holes, cut perimeter and flat-pattern size are extracted straight from the mesh — <b>no DXF needed</b>. An upload unit selector (mm / cm / m / in) keeps the shop honest about scale.' },
+      { icon: 'fa-solid fa-gears', title: 'Forming Rules Engine', html: 'Minimum bend radius, bend thinning, springback, limiting draw ratio, blank holder force, hole punching rules, punch-die clearance and press tonnage — each a hand-calculated pure function with parameters injected.' },
+      { icon: 'fa-solid fa-clipboard-check', title: 'Verdicts & Quote', html: 'Low / medium / high risk verdicts with confidence, the exact rule, value and limit behind every call, plus strip nesting, sheet plan, material and tool cost on a CSV quote sheet.' },
+      { icon: 'fa-solid fa-arrows-rotate', title: 'Tryout & Calibration', html: 'Tryout records with defect photos feed a vision diagnosis and a shop calibration loop: confirmed correction factors apply to your workshop only, and the predicted-vs-actual ledger closes the loop.' }
+    ];
+    document.querySelectorAll('.flow-node').forEach(node => {
+      node.onclick = () => {
+        const i = +node.dataset.i;
+        document.querySelectorAll('.flow-node').forEach(n => n.classList.toggle('active', n === node));
+        document.getElementById('flowIcon').className = flowData[i].icon;
+        document.getElementById('flowTitle').textContent = flowData[i].title;
+        document.getElementById('flowDetail').innerHTML = flowData[i].html;
+      };
+    });
+    document.getElementById('flowIcon').className = flowData[0].icon;
+    document.getElementById('flowDetail').innerHTML = flowData[0].html;
+
+    /* ============ Tonnage calculator ============ */
+    const catalog = [5, 10, 20, 40, 63, 100, 160, 200, 250, 315, 400, 500];
+    function calc() {
+      const L = +document.getElementById('lSlider').value;
+      const t = +document.getElementById('tSlider').value;
+      const s = +document.getElementById('sSlider').value;
+      const f = +document.getElementById('fSlider').value;
+      document.getElementById('lVal').textContent = L;
+      document.getElementById('tVal').textContent = t.toFixed(1);
+      document.getElementById('sVal').textContent = s;
+      document.getElementById('fVal').textContent = f.toFixed(2);
+      const force = L * t * s / 1000;
+      const ton = force / 9.81 * f;
+      document.getElementById('forceOut').textContent = force.toFixed(1);
+      document.getElementById('tonOut').textContent = ton.toFixed(1);
+      const press = catalog.find(c => c >= ton) || 500;
+      document.getElementById('pressOut').textContent = (press >= 200 ? 'H-frame ' : 'C-frame ') + press + ' T' + (press >= ton ? ' ✓ fits' : '');
+    }
+    ['lSlider', 'tSlider', 'sSlider', 'fSlider'].forEach(id => document.getElementById(id).addEventListener('input', calc));
+    calc();
+
+    /* ============ Verdict simulator ============ */
+    function thinningFor(r) {
+      if (r >= 1.5) return 13.57 + 9.64 / r;
+      return 20 + (1.5 - r) * 30;
+    }
+    function verdict() {
+      const r = +document.getElementById('rSlider').value;
+      const radiusOk = r >= 1.5;
+      const thin = thinningFor(r);
+      const thinOk = thin <= 20;
+      const ok = radiusOk && thinOk;
+
+      document.getElementById('rVal').textContent = r.toFixed(1);
+
+      const cr = document.getElementById('chkRadius');
+      cr.classList.toggle('ok', radiusOk); cr.classList.toggle('bad', !radiusOk);
+      cr.querySelector('.st').textContent = radiusOk ? '✓' : '✕';
+      document.getElementById('chkRadiusV').textContent = radiusOk ? `PASS · ${(r / 1.5).toFixed(1)}× margin` : 'FAIL · below limit';
+      document.getElementById('chkRadius').children[1].textContent = `Minimum bend radius — inner R${r.toFixed(1)} vs limit 1.5 mm`;
+
+      const ct = document.getElementById('chkThin');
+      ct.classList.toggle('ok', thinOk); ct.classList.toggle('bad', !thinOk);
+      ct.querySelector('.st').textContent = thinOk ? '✓' : '✕';
+      document.getElementById('chkThinV').textContent = `${thin.toFixed(1)}% ${thinOk ? 'PASS' : 'FAIL'}`;
+
+      const box = document.getElementById('verdictBox');
+      box.classList.toggle('low', ok); box.classList.toggle('high', !ok);
+      document.getElementById('verdictWord').textContent = ok ? 'LOW RISK' : 'HIGH RISK';
+      document.getElementById('verdictConf').textContent = ok ? (87 + Math.round((r - 5) * 0.4)) + '%' : '91%';
+      document.getElementById('verdictDetail').innerHTML = ok
+        ? 'All forming checks pass.<br>Flagged for human check — never “approved”.'
+        : 'Radius and / or thinning checks fail.<br>Flagged for human check — never “rejected”.';
+      document.getElementById('fixLine').style.display = ok ? 'none' : 'block';
+    }
+    document.getElementById('rSlider').addEventListener('input', verdict);
+    verdict();
+
+    /* ============ Init ============ */
+    goTo(0);
+    document.fullscreenElement;
+  </script>
+</body>
+</html>
