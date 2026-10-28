@@ -294,7 +294,7 @@
       </div>
       <div class="header-center">
         <div class="status-badge"><span class="status-dot"></span>ADVISOR ENGINE: LIVE</div>
-        <div class="slide-indicator" id="slideIndicator">01 / 08</div>
+        <div class="slide-indicator" id="slideIndicator">01 / 09</div>
       </div>
       <div class="header-actions">
         <button class="btn-icon" id="notesBtn" title="Toggle Presenter Notes (N)"><i class="fa-solid fa-book-open"></i></button>
@@ -610,8 +610,48 @@
         </div>
       </section>
 
-      <!-- 8. SUMMARY -->
-      <section class="slide" data-notes="Conclude: TryoutZero is decision support, never a replacement for tryout. Every verdict is flagged for human check and every default stays pending mechanical-lead verification. Invite questions and open the standalone live demo with the 3D press simulation.">
+      <!-- 8. MACHINE CONNECTIVITY -->
+      <section class="slide" data-notes="This is the differentiator. AutoForm simulates the die before it is cut; we also watch it run. Register a press and mint a machine token — owner-only, stored only as a hash, shown once. A gateway beside the machine streams strokes over OPC-UA, Modbus TCP or MQTT — OPC-UA for modern press controls (Delem, ESA, Beckhoff), Modbus for tonnage monitors, MQTT for shop-floor brokers — or the built-in simulator for the demo with no hardware. Every stroke gets an advisory verdict: overload against the press rating, headroom against the 80% capacity parameter, drift against the reference force for the linked job, and drift against the rolling median of the last 20 strokes. Sustained drift proposes a press safety-factor calibration the owner confirms — the same confirm-gated loop as the tryout screen, now fed by the machine itself. Stress the contract: the gateway only pushes data outbound, the machine network is never exposed, the token authorizes exactly one action, and verdicts are advisory risk levels for human check. Nothing here approves a job, drives a press or stops it.">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-tower-broadcast"></i> Machine connectivity</div>
+          <h2 class="slide-title">The Closed Loop: The Press Talks Back</h2>
+          <p class="slide-subtitle">Predict the die, watch it run on the press, and calibrate from every stroke</p>
+        </div>
+        <div class="slide-body">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-diagram-project"></i> One stroke, end to end</div>
+            <ul class="bullet-list">
+              <li class="bullet-item"><i class="fa-solid fa-key"></i><span><b>Register</b> — a press joins the shop list and mints a machine token: owner-only, hashed at rest, shown once.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-tower-broadcast"></i><span><b>Stream</b> — a gateway beside the machine pushes strokes over <b>OPC-UA</b>, <b>Modbus TCP</b> or <b>MQTT</b> — or the bundled simulator, zero hardware.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-gauge-high"></i><span><b>Judge</b> — overload vs the rating, headroom vs the 80% capacity parameter, drift vs the reference force and the rolling median of the last 20 strokes.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-arrows-spin"></i><span><b>Learn</b> — sustained drift proposes a safety-factor calibration; the owner confirms it and future tonnage estimates use it.</span></li>
+            </ul>
+            <div class="metric-grid" style="margin-top:1rem">
+              <div class="metric"><div class="lbl">Simulation horizon</div><div class="nums"><span class="before">Before the cut</span><span class="after">Every stroke</span></div></div>
+              <div class="metric"><div class="lbl">Drift signal</div><div class="nums"><span class="before">Photo, after damage</span><span class="after">Tonnage curve, as it drifts</span></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-shield-halved"></i> Safe by construction</div>
+            <ul class="bullet-list">
+              <li class="bullet-item"><i class="fa-solid fa-lock"></i><span>The machine token authorizes one action — posting this press&apos;s strokes — and is stored only as a sha256 hash. Rotate it and the old one dies.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-arrow-up-right-from-square"></i><span>The gateway only pushes data <b>outbound</b> to the API. The press network is never exposed, and unplugged servers change nothing on the floor.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-triangle-exclamation"></i><span>Advisory only: every stroke verdict is a risk level flagged for human check — it never approves a job, drives a press or stops one.</span></li>
+            </ul>
+            <div class="widget" style="margin-top:auto">
+              <div class="widget-title"><i class="fa-solid fa-industry"></i> Where this goes next</div>
+              <div style="font-size:0.86rem;line-height:1.6;color:var(--text-muted)">
+                The die tryout is the instrumented moment: the press is watched, the engine already predicted the force, and every
+                measured stroke tightens the shop&apos;s calibration. Production monitoring and stroke-count tool life then come
+                almost for free — the closed loop AutoForm cannot close.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. SUMMARY -->
+      <section class="slide" data-notes="Conclude: TryoutZero is decision support, never a replacement for tryout. Every verdict is flagged for human check and every default stays pending mechanical-lead verification. Close on the arc: AutoForm simulates the die before it is cut — we do that too, and then we watch it run on the press and learn from every stroke. Invite questions and open the standalone live demo with the 3D press simulation.">
         <div class="summary">
           <h1>Check the Die <span>Before It Is Cut</span></h1>
           <p class="sub">TryoutZero · decision support for small press tool rooms</p>
@@ -620,6 +660,7 @@
             <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>Pure-function rules engine: F = L × t × τ blanking force and tonnage sizing — every parameter auditable.</span></div>
             <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>Real-time press simulation with a ram that stalls on overload; 2D tool path plus a 3D press from the shop's CAD.</span></div>
             <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>The shop gets smarter with every die: confirmed correction factors apply to that workshop only.</span></div>
+            <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>Machine connectivity: a press streams its strokes over OPC-UA, Modbus or MQTT — every stroke verdict-judged, sustained drift calibrated with owner confirmation.</span></div>
           </div>
           <div class="summary-links">
             <a href="./tryoutzero-presentation.html"><i class="fa-solid fa-play"></i> Replay this presentation</a>
@@ -629,7 +670,7 @@
         </div>
       </section>
 
-      <div class="slide-number" id="slideNumber">SLIDE 01 / 08</div>
+      <div class="slide-number" id="slideNumber">SLIDE 01 / 09</div>
       <div class="slide-watermark">SHOP-TALKS • TryoutZero ShopTalk 2026</div>
     </main>
 
@@ -693,7 +734,7 @@
     const slides = Array.from(document.querySelectorAll('.slide'));
     const thumbs = document.getElementById('thumbs');
     const drawerGrid = document.getElementById('drawerGrid');
-    const titles = ['Check the Die Before It Is Cut', 'The Die Tryout Problem', 'The TryoutZero Pipeline', 'A Rules Engine You Can Audit', 'The Verdict Flips in One Edit', 'Match the Job to the Machine', 'AI Vision & the Calibration Loop', 'Check the Die Before It Is Cut'];
+    const titles = ['Check the Die Before It Is Cut', 'The Die Tryout Problem', 'The TryoutZero Pipeline', 'A Rules Engine You Can Audit', 'The Verdict Flips in One Edit', 'Match the Job to the Machine', 'AI Vision & the Calibration Loop', 'The Closed Loop: The Press Talks Back', 'Check the Die Before It Is Cut'];
     let cur = 0;
 
     slides.forEach((_, i) => {

@@ -110,6 +110,20 @@ def press_tonnage(force_kn, safety_factor):
   },
   {
     id: 7,
+    layout: "bullets",
+    title: "Machine Connectivity: The Closed Loop",
+    subtitle: "Connect a real press — every stroke is judged, and sustained drift calibrates the shop",
+    content: [
+      "Register a press and mint a machine token — one click, owner-only, stored only as a hash and shown once",
+      "A gateway beside the machine streams strokes over OPC-UA, Modbus TCP or MQTT — or the built-in simulator for the demo with no hardware",
+      "Every stroke gets an advisory verdict: overload against the press rating, headroom against the 80% capacity parameter, drift against the reference force for the linked job",
+      "Drift is tracked against the rolling median of the last 20 strokes — the earliest signal of tool wear, dull edges or a lubrication change",
+      "Sustained drift proposes a press safety-factor calibration for the shop to confirm — the same confirm-gated loop as the tryout screen, now fed by the machine itself"
+    ],
+    speakerNotes: "This is the differentiator. AutoForm simulates the die before it is cut; we also watch it run. The gateway only pushes data outbound to the API — the machine network is never exposed, and the machine token authorizes exactly one action: posting this press's strokes. Stress the contract: verdicts are advisory risk levels for human check. Nothing here approves a job, drives a press or stops it. End on the loop: predict, watch it run, learn."
+  },
+  {
+    id: 8,
     layout: "split-code",
     title: "Full-Stack Under the Hood",
     subtitle: "Next.js 16 + FastAPI, 153 backend tests, 7 Playwright e2e tests clicking the whole journey",
@@ -138,12 +152,12 @@ frontend/    Next.js 16 (App Router) + Tailwind CSS v4
     speakerNotes: "Zoom out to the engineering. The quality gates are real: 153 hand-calculated pytest cases, lint and type-check clean, and the e2e suite walks the whole user journey in a real browser, asserting the ADVISOR ENGINE: LIVE badge on load."
   },
   {
-    id: 8,
+    id: 9,
     layout: "summary",
     title: "Check the Die Before It Is Cut",
     subtitle: "Presented by Kishore Ravi & Sai Amogh D K • TryoutZero",
     presenter: "Kishore Ravi & Sai Amogh D K",
     resourcesText: "Standalone interactive presentation: /presentations/tryoutzero-presstool/index.html",
-    speakerNotes: "Conclude: TryoutZero is decision support, never a replacement for tryout. Every verdict is flagged for human check and every default stays pending mechanical-lead verification. Invite questions and open the standalone live demo with the 3D press simulation."
+    speakerNotes: "Conclude: TryoutZero is decision support, never a replacement for tryout. Every verdict is flagged for human check and every default stays pending mechanical-lead verification. Close on the arc: AutoForm simulates the die before it is cut — we do that too, and then we watch it run on the press and learn from every stroke. Invite questions and open the standalone live demo with the 3D press simulation."
   }
 ];
