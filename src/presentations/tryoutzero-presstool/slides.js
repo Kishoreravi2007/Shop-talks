@@ -6,7 +6,7 @@ export const slides = [
     subtitle: "A browser-based advisor for small press tool rooms",
     presenter: "Kishore Ravi & Sai Amogh D K",
     event: "TryoutZero ShopTalk 2026 • Oct 14, 2026",
-    speakerNotes: "Welcome everyone to ShopTalk! Today we look at how a small press tool room can check a sheet-metal part before the die is made — using a rules engine grounded in real shop language: blank, draw, thinning, wrinkling, springback, tonnage, nesting. Decision support, never a replacement for tryout."
+    speakerNotes: "• Small press tool room, sheet-metal die tryout\n• One question: can we check the part BEFORE the die is made?\n• Shop language all the way — blank, draw, thinning, springback, tonnage\n• Decision support. Never a replacement for tryout",
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ export const slides = [
       "Quotes are gut-feel: strip nesting, sheet plan, material and tool cost are guessed under deadline pressure",
       "Tryout learnings are lost — the same mistake is paid for again on the next die"
     ],
-    speakerNotes: "Set up the pain. In a small press tool room the die is manufactured first and validated during tryout on the press. Each failed tryout loop means welding, re-machining or scrapping die steel. Ask the audience: how many of your shops still hand-calculate springback?"
+    speakerNotes: "• Pain: die is cut first, problems show at tryout\n• Every failed loop = welding, re-machining or scrapping die steel\n• Ask: who still hand-calculates springback here?\n• The fix must be fast, cheap and usable on the shop floor",
   },
   {
     id: 3,
@@ -40,7 +40,7 @@ export const slides = [
       "The verdict engine speaks in shop language: LOW / MEDIUM / HIGH risk with a confidence level, always flagged for human check",
       "Tryout records feed a shop calibration loop: confirmed correction factors apply to that workshop only"
     ],
-    speakerNotes: "Walk the pipeline end to end. Emphasize the honesty principle: verdicts use the words low / medium / high risk and are always flagged for human check. Never approved, never guaranteed. Every default rule value remains to be verified by the mechanical lead."
+    speakerNotes: "• Pipeline: upload STL/STEP/DXF → unit detection → rules engine → verdicts\n• Output is low / medium / high risk, always flagged for human check\n• Also: blank size, nesting, quote, PDF report\n• Every default rule value stays pending mechanical-lead verification",
   },
   {
     id: 4,
@@ -74,7 +74,7 @@ def press_tonnage(force_kn, safety_factor):
       "Punch-die clearance, bend thinning, springback, limiting draw ratio, blank holder force — all traceable to rule, value and limit",
       "No ML in Phase 1: AI sits on defect photos, drawing reading and explanation phrasing, constrained to a fixed defect list with confidence"
     ],
-    speakerNotes: "Show the honesty of the engineering: cutting force F = L x t x tau, then tonnage with a safety factor from the parameters table. Every value is auditable and pending mechanical-lead verification. This is decision support built on mechanics, not a black box."
+    speakerNotes: "• Cutting force F = L × t × τ, then tonnage with a safety factor\n• Every value lives in an editable parameter table — nothing hidden\n• The engine is pure functions: inputs + params → verdicts\n• Mechanics you can audit, not a black box",
   },
   {
     id: 5,
@@ -92,7 +92,7 @@ def press_tonnage(force_kn, safety_factor):
       "The catalog spans 5–500 T presses with tonnage bands and bed fit; the real-time 3D press is built from the shop's own CAD press models",
       "Radius 5 mm → LOW RISK; drop it to 0.5 mm and the verdict flips to HIGH RISK with the smallest fix that resolves it"
     ],
-    speakerNotes: "Live demo moment: run the demo bracket, expected LOW RISK with inner radius 5 mm against the 1.5 mm limit and 15.5% thinning against 20%. Edit the radius to 0.5 mm — HIGH RISK appears with the minimal change that fixes it, and the coupled thinning check shows about 50% thinning."
+    speakerNotes: "• DEMO: demo bracket → LOW RISK (R5 vs 1.5 mm limit, 15.5% vs 20% thinning)\n• Edit radius to 0.5 mm → flips to HIGH RISK, with the fix, thinning ~50%\n• Same engine, one number changed, verdict follows the physics\n• Then press matching: pick the press, watch the ram stall on overload",
   },
   {
     id: 6,
@@ -106,7 +106,7 @@ def press_tonnage(force_kn, safety_factor):
       "Predicted-vs-actual ledger and die history timeline keep every verdict auditable after production",
       "Degrades honestly: without credentials the vision features report switched off — the rules engine still runs"
     ],
-    speakerNotes: "Explain the learning loop. A recorded tryout with measured thinning makes the advisor propose a shop calibration factor. Confirm it and future checks in that workshop use it. The predicted-vs-actual ledger closes the trust loop."
+    speakerNotes: "• Defect photo → constrained AI names it from a fixed list\n• It may say unsure — it never invents numbers\n• Tryout measurements propose a factor; the owner confirms\n• Scope = grade × thickness, so a tight steel keeps its own factor\n• Predicted-vs-actual ledger keeps verdicts auditable later",
   },
   {
     id: 7,
@@ -120,7 +120,7 @@ def press_tonnage(force_kn, safety_factor):
       "Per-defect roll-up across the job — which rework fixes which defect on which die — and the advisor suggestion path records the deterministic cause table as engine_suggestion",
       "This ledger is the shop knowledge that compounds: the dataset nobody else can copy, because AutoForm never touches the tryout bench"
     ],
-    speakerNotes: "This is the moat slide. The physical loop is universal, but nobody records the outcome systematically — a change that did not help is as valuable as one that did, and today it is only a memory. Be clear about the semantics: an empty defect list is not evidence, so the loop waits for a sheet that says what was seen. And the suggestion path always cites the fixed knowledge table, never a model."
+    speakerNotes: "• The loop everyone runs: trial N defect → rework → trial N+1 verdict\n• Recorded here: resolved / no help / pending\n• A blank trial sheet proves nothing → change stays pending\n• Roll-up: which rework fixes which defect on which die\n• The moat — nobody else has tryout-bench data",
   },
   {
     id: 8,
@@ -135,7 +135,7 @@ def press_tonnage(force_kn, safety_factor):
       "Drift is tracked against the rolling median of the last 20 strokes — the earliest signal of tool wear, dull edges or a lubrication change",
       "Sustained drift proposes a press safety-factor calibration for the shop to confirm — the same confirm-gated loop as the tryout screen, now fed by the machine itself"
     ],
-    speakerNotes: "This is the differentiator. AutoForm simulates the die before it is cut; we also watch it run. The gateway only pushes data outbound to the API — the machine network is never exposed, and the machine token authorizes exactly one action: posting this press's strokes. Stress the contract: verdicts are advisory risk levels for human check. Nothing here approves a job, drives a press or stops it. If asked about the curve: the peak alone flags overload, but force still rising at bottom-dead-centre is the signature of a stripping problem nobody sees from a number. End on the loop: predict, watch it run, learn."
+    speakerNotes: "• Register a press → gateway beside the machine streams strokes\n• OPC-UA (Delem/Beckhoff), Modbus, MQTT — or the simulator, zero hardware\n• Per stroke: overload vs rating, headroom, drift vs reference\n• Curve: force still climbing late = stripping trouble\n• Sustained drift proposes a calibration the owner confirms\n• Contract: advisory only — it never drives a press",
   },
   {
     id: 9,
@@ -149,7 +149,7 @@ def press_tonnage(force_kn, safety_factor):
       "The concentric cylinders of one bend (inner and outer surface) merge into a single candidate — the one the die is made to",
       "B-spline bends, exotic exports and no-cylinder files return an honest 'no candidates' instead of a guess — plus a printable die-trial sheet to take to the press"
     ],
-    speakerNotes: "This kills the main data-entry bottleneck: retyping geometry the CAD already has. Be precise about the honesty design — we read cylinders, not intent, so a fillet or a boss can look like a bend and the UI says so on the screen. The flats still come from the drawing because a solid doesn't know which edge the toolmaker measures from. Close with the printable trial sheet: prediction on one side, measurement grid on the other, the artefact the tool room actually holds."
+    speakerNotes: "• The CAD already knows the bends — read them, don't retype\n• Cylindrical faces → radius + angle; the concentric pair merges to one\n• Candidates only: holes and rounds can look like bends → toolmaker confirms\n• Flats come from the drawing; no cylinders → honest \"no candidates\"\n• Printable trial sheet: prediction left, measurement grid right",
   },
   {
     id: 10,
@@ -178,7 +178,7 @@ frontend/    Next.js 16 (App Router) + Tailwind CSS v4
       "PDF report with every verdict showing its rule, value and limit — shop language throughout",
       "Public demo URLs via Cloudflare quick tunnels for shopfloor walkthroughs"
     ],
-    speakerNotes: "Zoom out to the engineering. The quality gates are real: 153 hand-calculated pytest cases, lint and type-check clean, and the e2e suite walks the whole user journey in a real browser, asserting the ADVISOR ENGINE: LIVE badge on load."
+    speakerNotes: "• Architecture: Next.js front end, FastAPI rules engine\n• Quality gates: pytest, lint and type-check clean, e2e in a browser\n• Encryption at rest, rate limits, audit trail, machine tokens\n• Built to be read by a mechanical lead, not just a developer",
   },
   {
     id: 11,
@@ -192,7 +192,7 @@ frontend/    Next.js 16 (App Router) + Tailwind CSS v4
       "Workspace settings: your material grades (owner-only CRUD, everything still starting as an unverified candidate), the calibration ledger with confirm/reject, and the audit trail with filters",
       "CSV export of jobs, tryouts and the die-change ledger — spreadsheet-injection defended — plus multi-bend parts checked bend by bend, quote revisions priced side by side, and a printable die-trial sheet"
     ],
-    speakerNotes: "Close the feature tour here before the summary. The through-line: every number on this screen is computed from the workshop's own rows, so the shop can verify all of it. The advisor is deliberately not a general chatbot — it answers from shop data and admits when a question is outside that, which is what keeps it trustworthy on the floor."
+    speakerNotes: "• Analytics: risk mix, defect Pareto, die-change outcomes, press streams\n• Ask the advisor — answers from YOUR rows, admits when out of range\n• Revisions: v2 of a part, history on v1 untouched\n• Settings: your grades, calibration ledger, audit trail, CSV export\n• Every number here is a query the shop can verify",
   },
   {
     id: 12,
@@ -201,6 +201,6 @@ frontend/    Next.js 16 (App Router) + Tailwind CSS v4
     subtitle: "Presented by Kishore Ravi & Sai Amogh D K • TryoutZero",
     presenter: "Kishore Ravi & Sai Amogh D K",
     resourcesText: "Standalone interactive presentation: /presentations/tryoutzero-presstool/index.html",
-    speakerNotes: "Conclude: TryoutZero is decision support, never a replacement for tryout. Every verdict is flagged for human check and every default stays pending mechanical-lead verification. Close on the arc: AutoForm simulates the die before it is cut — we do that too, and then we watch it run on the press and learn from every stroke. Invite questions and open the standalone live demo with the 3D press simulation."
+    speakerNotes: "• Close: AutoForm simulates the die before it is cut — so do we\n• Then we watch it run on the press and learn from every stroke\n• Verdicts stay advisory, defaults stay pending verification\n• Live demo is open — invite questions",
   }
 ];

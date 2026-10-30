@@ -264,7 +264,7 @@
     }
     .notes-panel.show { display: block; }
     .notes-panel h5 { font-size: 0.72rem; letter-spacing: 1.6px; text-transform: uppercase; color: var(--orange); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
-    .notes-panel p { font-size: 0.84rem; line-height: 1.55; color: #cfd6db; }
+    .notes-panel p { font-size: 0.84rem; line-height: 1.55; color: #cfd6db; white-space: pre-line; }
 
     /* ---------- Drawer ---------- */
     .drawer-overlay { position: fixed; inset: 0; background: rgba(5,7,10,.75); backdrop-filter: blur(6px); z-index: 300; display: none; align-items: center; justify-content: center; }
@@ -305,7 +305,10 @@
 
     <main>
       <!-- 1. HERO -->
-      <section class="slide active" data-notes="Welcome everyone to ShopTalk! Today we look at how a small press tool room can check a sheet-metal part before the die is made — using a rules engine grounded in real shop language: blank, draw, thinning, wrinkling, springback, tonnage, nesting. TryoutZero is decision support, never a replacement for tryout.">
+      <section class="slide active" data-notes="• Small press tool room, sheet-metal die tryout
+• One question: can we check the part BEFORE the die is made?
+• Shop language all the way — blank, draw, thinning, springback, tonnage
+• Decision support. Never a replacement for tryout">
         <div class="hero">
           <div class="hero-mark"><div class="ring"></div><div class="slash"></div></div>
           <div class="hero-eyebrow">ShopTalk 2026 • Bangalore, India</div>
@@ -338,7 +341,10 @@
       </section>
 
       <!-- 2. PROBLEM -->
-      <section class="slide" data-notes="Set up the pain. In a small press tool room the die is manufactured first and validated during tryout on the press. Each failed tryout loop means welding, re-machining or scrapping die steel. Ask the audience how many of their shops still hand-calculate springback.">
+      <section class="slide" data-notes="• Pain: die is cut first, problems show at tryout
+• Every failed loop = welding, re-machining or scrapping die steel
+• Ask: who still hand-calculates springback here?
+• The fix must be fast, cheap and usable on the shop floor">
         <div class="slide-header">
           <div class="slide-category"><i class="fa-solid fa-triangle-exclamation"></i> The Problem</div>
           <h2 class="slide-title">The Die Tryout Problem</h2>
@@ -380,7 +386,10 @@
       </section>
 
       <!-- 3. PIPELINE -->
-      <section class="slide" data-notes="Walk the pipeline end to end. Emphasize the honesty principle: verdicts use the words low / medium / high risk and are always flagged for human check. Never approved, never guaranteed. Every default rule value remains to be verified by the mechanical lead.">
+      <section class="slide" data-notes="• Pipeline: upload STL/STEP/DXF → unit detection → rules engine → verdicts
+• Output is low / medium / high risk, always flagged for human check
+• Also: blank size, nesting, quote, PDF report
+• Every default rule value stays pending mechanical-lead verification">
         <div class="slide-header">
           <div class="slide-category"><i class="fa-solid fa-diagram-project"></i> Architecture</div>
           <h2 class="slide-title">The TryoutZero Pipeline</h2>
@@ -432,7 +441,10 @@
       </section>
 
       <!-- 4. RULES + CALCULATOR -->
-      <section class="slide" data-notes="Show the honesty of the engineering: cutting force F = L x t x tau, then tonnage with a safety factor from the parameters table. Every value is auditable and pending mechanical-lead verification. This is decision support built on mechanics, not a black box.">
+      <section class="slide" data-notes="• Cutting force F = L × t × τ, then tonnage with a safety factor
+• Every value lives in an editable parameter table — nothing hidden
+• The engine is pure functions: inputs + params → verdicts
+• Mechanics you can audit, not a black box">
         <div class="slide-header">
           <div class="slide-category"><i class="fa-solid fa-code"></i> Under the hood</div>
           <h2 class="slide-title">A Rules Engine You Can Audit</h2>
@@ -490,7 +502,10 @@
       </section>
 
       <!-- 5. VERDICT SIMULATOR -->
-      <section class="slide" data-notes="Live demo moment: run the demo bracket, expected LOW RISK with inner radius 5 mm against the 1.5 mm limit and 15.5% thinning against 20%. Edit the radius to 0.5 mm — HIGH RISK appears with the minimal change that fixes it, and the coupled thinning check shows about 50% thinning.">
+      <section class="slide" data-notes="• DEMO: demo bracket → LOW RISK (R5 vs 1.5 mm limit, 15.5% vs 20% thinning)
+• Edit radius to 0.5 mm → flips to HIGH RISK, with the fix, thinning ~50%
+• Same engine, one number changed, verdict follows the physics
+• Then press matching: pick the press, watch the ram stall on overload">
         <div class="slide-header">
           <div class="slide-category"><i class="fa-solid fa-clipboard-check"></i> Demo bracket</div>
           <h2 class="slide-title">The Verdict Flips in One Edit</h2>
@@ -539,7 +554,10 @@
       </section>
 
       <!-- 6. PRESS DEMO -->
-      <section class="slide" data-notes="Enter a blanking job and see which demo press can run it, then watch the real-time simulation. Match against a 5-500 T catalog with tonnage bands and bed fit. The ram stalls if the job overloads the selected machine — then rematch.">
+      <section class="slide" data-notes="• Catalog: 50 operations, presses 5-500 T with tonnage bands and bed fit
+• The 3D press is built from the shop's own CAD press models
+• Overload the job and the ram stalls — in the browser
+• Same engine: the tonnage numbers come from the rules table, not a guess">
         <div class="slide-header">
           <div class="slide-category"><i class="fa-solid fa-industry"></i> Press demo</div>
           <h2 class="slide-title">Match the Job to the Machine</h2>
@@ -576,7 +594,11 @@
       </section>
 
       <!-- 7. VISION + CALIBRATION -->
-      <section class="slide" data-notes="Explain the learning loop. A recorded tryout with measured thinning makes the advisor propose a shop calibration factor. Confirm it and future checks in that workshop use it. The predicted-vs-actual ledger closes the trust loop. AI is constrained: fixed defect list, confidence, unsure allowed, never invents numbers.">
+      <section class="slide" data-notes="• Defect photo → constrained AI names it from a fixed list
+• It may say unsure — it never invents numbers
+• Tryout measurements propose a factor; the owner confirms
+• Scope = grade × thickness, so a tight steel keeps its own factor
+• Predicted-vs-actual ledger keeps verdicts auditable later">
         <div class="slide-header">
           <div class="slide-category"><i class="fa-solid fa-eye"></i> Vision &amp; learning</div>
           <h2 class="slide-title">AI Vision &amp; the Calibration Loop</h2>
@@ -611,7 +633,11 @@
       </section>
 
       <!-- 8. DIE-CHANGE LEDGER -->
-      <section class="slide" data-notes="This is the moat slide. The physical loop is universal, but nobody records the outcome systematically — a change that did not help is as valuable as one that did, and today it is only a memory. Be clear about the semantics: an empty defect list is not evidence, so the loop waits for a sheet that says what was seen. And the suggestion path always cites the fixed knowledge table, never a model.">
+      <section class="slide" data-notes="• The loop everyone runs: trial N defect → rework → trial N+1 verdict
+• Recorded here: resolved / no help / pending
+• A blank trial sheet proves nothing → change stays pending
+• Roll-up: which rework fixes which defect on which die
+• The moat — nobody else has tryout-bench data">
         <div class="slide-header">
           <div class="slide-category"><i class="fa-solid fa-screwdriver-wrench"></i> Die-change ledger</div>
           <h2 class="slide-title">Does the Rework Actually Work?</h2>
@@ -649,7 +675,12 @@
       </section>
 
       <!-- 9. MACHINE CONNECTIVITY -->
-      <section class="slide" data-notes="This is the differentiator. AutoForm simulates the die before it is cut; we also watch it run. Register a press and mint a machine token — owner-only, stored only as a hash, shown once. A gateway beside the machine streams strokes over OPC-UA, Modbus TCP or MQTT — OPC-UA for modern press controls (Delem, ESA, Beckhoff), Modbus for tonnage monitors, MQTT for shop-floor brokers — or the built-in simulator for the demo with no hardware. Every stroke gets an advisory verdict: overload against the press rating, headroom against the 80% capacity parameter, drift against the reference force for the linked job, and drift against the rolling median of the last 20 strokes. Sustained drift proposes a press safety-factor calibration the owner confirms — the same confirm-gated loop as the tryout screen, now fed by the machine itself. Stress the contract: the gateway only pushes data outbound, the machine network is never exposed, the token authorizes exactly one action, and verdicts are advisory risk levels for human check. Nothing here approves a job, drives a press or stops it.">
+      <section class="slide" data-notes="• Register a press → gateway beside the machine streams strokes
+• OPC-UA (Delem/Beckhoff), Modbus, MQTT — or the simulator, zero hardware
+• Per stroke: overload vs rating, headroom, drift vs reference
+• Curve: force still climbing late = stripping trouble
+• Sustained drift proposes a calibration the owner confirms
+• Contract: advisory only — it never drives a press">
         <div class="slide-header">
           <div class="slide-category"><i class="fa-solid fa-tower-broadcast"></i> Machine connectivity</div>
           <h2 class="slide-title">The Closed Loop: The Press Talks Back</h2>
@@ -689,7 +720,11 @@
       </section>
 
       <!-- 10. CAD BEND RECOGNITION -->
-      <section class="slide" data-notes="This kills the main data-entry bottleneck: retyping geometry the CAD already has. Be precise about the honesty design — we read cylinders, not intent, so a fillet or a boss can look like a bend and the UI says so on the screen. The flats still come from the drawing because a solid does not know which edge the toolmaker measures from. Close with the printable trial sheet: prediction on one side, measurement grid on the other, the artefact the tool room actually holds.">
+      <section class="slide" data-notes="• The CAD already knows the bends — read them, don't retype
+• Cylindrical faces → radius + angle; the concentric pair merges to one
+• Candidates only: holes and rounds can look like bends → toolmaker confirms
+• Flats come from the drawing; no cylinders → honest &amp;quot;no candidates&amp;quot;
+• Printable trial sheet: prediction left, measurement grid right">
         <div class="slide-header">
           <div class="slide-category"><i class="fa-solid fa-ruler-combined"></i> CAD bend recognition</div>
           <h2 class="slide-title">The CAD Already Knows the Bends</h2>
@@ -724,7 +759,11 @@
       </section>
 
       <!-- 11. THE WORKSHOP LEARNS -->
-      <section class="slide" data-notes="Close the feature tour here before the summary. The through-line: every number on this screen is computed from the workshop's own rows, so the shop can verify all of it. The advisor is deliberately not a general chatbot — it answers from shop data and admits when a question is outside that, which is what keeps it trustworthy on the floor.">
+      <section class="slide" data-notes="• Analytics: risk mix, defect Pareto, die-change outcomes, press streams
+• Ask the advisor — answers from YOUR rows, admits when out of range
+• Revisions: v2 of a part, history on v1 untouched
+• Settings: your grades, calibration ledger, audit trail, CSV export
+• Every number here is a query the shop can verify">
         <div class="slide-header">
           <div class="slide-category"><i class="fa-solid fa-chart-line"></i> The workshop learns</div>
           <h2 class="slide-title">Numbers the Shop Can Verify</h2>
@@ -758,7 +797,10 @@
       </section>
 
       <!-- 12. SUMMARY -->
-      <section class="slide" data-notes="Conclude: TryoutZero is decision support, never a replacement for tryout. Every verdict is flagged for human check and every default stays pending mechanical-lead verification. Close on the arc: AutoForm simulates the die before it is cut — we do that too, and then we watch it run on the press and learn from every stroke. Invite questions and open the standalone live demo with the 3D press simulation.">
+      <section class="slide" data-notes="• Close: AutoForm simulates the die before it is cut — so do we
+• Then we watch it run on the press and learn from every stroke
+• Verdicts stay advisory, defaults stay pending verification
+• Live demo is open — invite questions">
         <div class="summary">
           <h1>Check the Die <span>Before It Is Cut</span></h1>
           <p class="sub">TryoutZero · decision support for small press tool rooms</p>

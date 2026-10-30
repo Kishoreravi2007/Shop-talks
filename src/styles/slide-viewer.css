@@ -444,6 +444,8 @@
   font-size: 1.05rem;
   color: #e2e8f0;
   line-height: 1.6;
+  /* Speaker notes are written as short bullet lines; keep the line breaks. */
+  white-space: pre-line;
 }
 
 /* Bottom Navigation Bar */
