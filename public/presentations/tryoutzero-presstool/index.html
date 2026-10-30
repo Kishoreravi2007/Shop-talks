@@ -294,7 +294,7 @@
       </div>
       <div class="header-center">
         <div class="status-badge"><span class="status-dot"></span>ADVISOR ENGINE: LIVE</div>
-        <div class="slide-indicator" id="slideIndicator">01 / 10</div>
+        <div class="slide-indicator" id="slideIndicator">01 / 12</div>
       </div>
       <div class="header-actions">
         <button class="btn-icon" id="notesBtn" title="Toggle Presenter Notes (N)"><i class="fa-solid fa-book-open"></i></button>
@@ -610,7 +610,45 @@
         </div>
       </section>
 
-      <!-- 8. MACHINE CONNECTIVITY -->
+      <!-- 8. DIE-CHANGE LEDGER -->
+      <section class="slide" data-notes="This is the moat slide. The physical loop is universal, but nobody records the outcome systematically — a change that did not help is as valuable as one that did, and today it is only a memory. Be clear about the semantics: an empty defect list is not evidence, so the loop waits for a sheet that says what was seen. And the suggestion path always cites the fixed knowledge table, never a model.">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-screwdriver-wrench"></i> Die-change ledger</div>
+          <h2 class="slide-title">Does the Rework Actually Work?</h2>
+          <p class="slide-subtitle">The tool-room loop everyone runs — now recorded, and it actually closes</p>
+        </div>
+        <div class="slide-body">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-rotate"></i> The loop, written down</div>
+            <ul class="bullet-list">
+              <li class="bullet-item"><i class="fa-solid fa-camera"></i><span>Trial N shows a defect, the die is reworked, trial N+1 shows whether the rework worked — the loop every tool room already runs, usually in a notebook.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-pen-to-square"></i><span>Record what was done to the die after a trial; the <b>next trial that records what was seen</b> closes it out — <b>resolved</b>, <b>no help</b>, or still <b>pending</b>.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-circle-question"></i><span>A blank trial sheet proves nothing (not inspected yet), so the change stays pending — outcomes compare two trial sheets and nothing more.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-book"></i><span>Per-defect roll-up across the job — which rework fixes which defect on which die — and the suggestion path records the deterministic cause table as <b>engine_suggestion</b>.</span></li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-database"></i> Why this is the moat</div>
+            <div class="verdict-box verdict-low" style="margin-top:0.75rem">
+              <strong>Resolved</strong>
+              <span>The defect it targeted is absent from the next trial&apos;s sheet — and other defects were recorded, so the sheet is not simply empty.</span>
+            </div>
+            <div class="verdict-box verdict-high" style="margin-top:0.5rem">
+              <strong>No help</strong>
+              <span>The same defect is still there. Recorded as knowledge, not failure — a change that did not work is exactly as valuable as one that did.</span>
+            </div>
+            <div class="widget" style="margin-top:auto">
+              <div class="widget-title"><i class="fa-solid fa-shield-halved"></i> Recorded, not judged</div>
+              <div style="font-size:0.86rem;line-height:1.6;color:var(--text-muted)">
+                The toolmaker&apos;s description is kept as written; the outcome is only the comparison of two
+                trial sheets. AutoForm never touches the tryout bench — this dataset starts here.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. MACHINE CONNECTIVITY -->
       <section class="slide" data-notes="This is the differentiator. AutoForm simulates the die before it is cut; we also watch it run. Register a press and mint a machine token — owner-only, stored only as a hash, shown once. A gateway beside the machine streams strokes over OPC-UA, Modbus TCP or MQTT — OPC-UA for modern press controls (Delem, ESA, Beckhoff), Modbus for tonnage monitors, MQTT for shop-floor brokers — or the built-in simulator for the demo with no hardware. Every stroke gets an advisory verdict: overload against the press rating, headroom against the 80% capacity parameter, drift against the reference force for the linked job, and drift against the rolling median of the last 20 strokes. Sustained drift proposes a press safety-factor calibration the owner confirms — the same confirm-gated loop as the tryout screen, now fed by the machine itself. Stress the contract: the gateway only pushes data outbound, the machine network is never exposed, the token authorizes exactly one action, and verdicts are advisory risk levels for human check. Nothing here approves a job, drives a press or stops it.">
         <div class="slide-header">
           <div class="slide-category"><i class="fa-solid fa-tower-broadcast"></i> Machine connectivity</div>
@@ -650,7 +688,7 @@
         </div>
       </section>
 
-      <!-- 9. CAD BEND RECOGNITION -->
+      <!-- 10. CAD BEND RECOGNITION -->
       <section class="slide" data-notes="This kills the main data-entry bottleneck: retyping geometry the CAD already has. Be precise about the honesty design — we read cylinders, not intent, so a fillet or a boss can look like a bend and the UI says so on the screen. The flats still come from the drawing because a solid does not know which edge the toolmaker measures from. Close with the printable trial sheet: prediction on one side, measurement grid on the other, the artefact the tool room actually holds.">
         <div class="slide-header">
           <div class="slide-category"><i class="fa-solid fa-ruler-combined"></i> CAD bend recognition</div>
@@ -685,7 +723,41 @@
         </div>
       </section>
 
-      <!-- 10. SUMMARY -->
+      <!-- 11. THE WORKSHOP LEARNS -->
+      <section class="slide" data-notes="Close the feature tour here before the summary. The through-line: every number on this screen is computed from the workshop's own rows, so the shop can verify all of it. The advisor is deliberately not a general chatbot — it answers from shop data and admits when a question is outside that, which is what keeps it trustworthy on the floor.">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-chart-line"></i> The workshop learns</div>
+          <h2 class="slide-title">Numbers the Shop Can Verify</h2>
+          <p class="slide-subtitle">Analytics, an advisor that answers from your own rows, and the surfaces a tool room runs on</p>
+        </div>
+        <div class="slide-body">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-chart-pie"></i> Analytics &amp; the advisor</div>
+            <ul class="bullet-list">
+              <li class="bullet-item"><i class="fa-solid fa-chart-simple"></i><span>Shop analytics: risk mix across every job, <b>defect Pareto</b> across every trial, die-change outcomes, press streams — computed from this workshop&apos;s own rows.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-comments"></i><span>Ask the advisor: <em>which jobs should I check first? did the die change help?</em> Deterministic answers from shop data, and it says when a question is outside its range.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-code-branch"></i><span><b>Design revisions</b>: a new drawing becomes v2 of the same part — inputs copied, linked to its parent, and the previous revision&apos;s checks, quotes and trial history untouched.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-layer-group"></i><span>Multi-bend parts checked <b>bend by bend</b>, and quote revisions priced side by side with their inputs kept beside each result.</span></li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-screwdriver-wrench"></i> The surfaces a tool room runs on</div>
+            <ul class="bullet-list">
+              <li class="bullet-item"><i class="fa-solid fa-flask"></i><span>Workspace settings: <b>your material grades</b> (owner-only CRUD, everything still starting as an unverified candidate), the calibration ledger with confirm/reject, and the audit trail with filters.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-file-csv"></i><span>CSV export of jobs, tryout trials and the die-change ledger — spreadsheet-injection defended — plus the <b>printable die-trial sheet</b> for the press.</span></li>
+            </ul>
+            <div class="widget" style="margin-top:auto">
+              <div class="widget-title"><i class="fa-solid fa-eye"></i> Verifiable, not magic</div>
+              <div style="font-size:0.86rem;line-height:1.6;color:var(--text-muted)">
+                Every tile, Pareto bar and answer is a query over rows the workshop can open, filter and
+                export. Nothing on this screen needs the shop to trust a model.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12. SUMMARY -->
       <section class="slide" data-notes="Conclude: TryoutZero is decision support, never a replacement for tryout. Every verdict is flagged for human check and every default stays pending mechanical-lead verification. Close on the arc: AutoForm simulates the die before it is cut — we do that too, and then we watch it run on the press and learn from every stroke. Invite questions and open the standalone live demo with the 3D press simulation.">
         <div class="summary">
           <h1>Check the Die <span>Before It Is Cut</span></h1>
@@ -695,6 +767,7 @@
             <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>Pure-function rules engine: F = L × t × τ blanking force and tonnage sizing — every parameter auditable.</span></div>
             <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>Real-time press simulation with a ram that stalls on overload; 2D tool path plus a 3D press from the shop's CAD.</span></div>
             <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>The CAD already knows the bends: candidates read from the STEP model, confirmed by the toolmaker, printed onto the trial sheet for the press.</span></div>
+            <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>The die-change ledger records whether each rework fixed the defect — the shop knowledge that compounds, and nobody else can copy it.</span></div>
             <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>The shop gets smarter with every die: confirmed correction factors apply to that workshop only.</span></div>
             <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>Machine connectivity: a press streams its strokes over OPC-UA, Modbus or MQTT — every stroke verdict-judged, sustained drift calibrated with owner confirmation.</span></div>
           </div>
@@ -706,7 +779,7 @@
         </div>
       </section>
 
-      <div class="slide-number" id="slideNumber">SLIDE 01 / 10</div>
+      <div class="slide-number" id="slideNumber">SLIDE 01 / 12</div>
       <div class="slide-watermark">SHOP-TALKS • TryoutZero ShopTalk 2026</div>
     </main>
 
@@ -770,7 +843,7 @@
     const slides = Array.from(document.querySelectorAll('.slide'));
     const thumbs = document.getElementById('thumbs');
     const drawerGrid = document.getElementById('drawerGrid');
-    const titles = ['Check the Die Before It Is Cut', 'The Die Tryout Problem', 'The TryoutZero Pipeline', 'A Rules Engine You Can Audit', 'The Verdict Flips in One Edit', 'Match the Job to the Machine', 'AI Vision & the Calibration Loop', 'The Closed Loop: The Press Talks Back', 'The CAD Already Knows the Bends', 'Check the Die Before It Is Cut'];
+    const titles = ['Check the Die Before It Is Cut', 'The Die Tryout Problem', 'The TryoutZero Pipeline', 'A Rules Engine You Can Audit', 'The Verdict Flips in One Edit', 'Match the Job to the Machine', 'AI Vision & the Calibration Loop', 'Does the Rework Actually Work?', 'The Closed Loop: The Press Talks Back', 'The CAD Already Knows the Bends', 'Numbers the Shop Can Verify', 'Check the Die Before It Is Cut'];
     let cur = 0;
 
     slides.forEach((_, i) => {

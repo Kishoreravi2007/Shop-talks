@@ -102,7 +102,7 @@ def press_tonnage(force_kn, safety_factor):
     content: [
       "Defect photo diagnosis on any OpenAI-compatible endpoint — NVIDIA NIM Llama-3.2-11B-Vision as the tested default",
       "Constrained AI: fixed defect list, confidence score, allowed to say unsure — never invents numbers",
-      "Tryout measurements propose correction factors; confirm one and it applies to your workshop only",
+      "Tryout measurements propose correction factors; confirm one and it applies to your workshop only — scoped to the grade and thickness that earned it, so a tight DP steel keeps its own factor",
       "Predicted-vs-actual ledger and die history timeline keep every verdict auditable after production",
       "Degrades honestly: without credentials the vision features report switched off — the rules engine still runs"
     ],
@@ -110,6 +110,20 @@ def press_tonnage(force_kn, safety_factor):
   },
   {
     id: 7,
+    layout: "bullets",
+    title: "The Die-Change Ledger",
+    subtitle: "The tool-room loop everyone runs — now recorded, and it actually closes",
+    content: [
+      "Trial N shows a defect, the die is reworked, trial N+1 shows whether the rework worked — the loop every tool room already runs, usually in a notebook",
+      "Record what was done to the die after a trial; the next trial that records what was seen closes it out: resolved, no help, or still pending",
+      "A blank trial sheet proves nothing (not inspected yet), so the change stays pending — outcomes compare two trial sheets and nothing more",
+      "Per-defect roll-up across the job — which rework fixes which defect on which die — and the advisor suggestion path records the deterministic cause table as engine_suggestion",
+      "This ledger is the shop knowledge that compounds: the dataset nobody else can copy, because AutoForm never touches the tryout bench"
+    ],
+    speakerNotes: "This is the moat slide. The physical loop is universal, but nobody records the outcome systematically — a change that did not help is as valuable as one that did, and today it is only a memory. Be clear about the semantics: an empty defect list is not evidence, so the loop waits for a sheet that says what was seen. And the suggestion path always cites the fixed knowledge table, never a model."
+  },
+  {
+    id: 8,
     layout: "bullets",
     title: "Machine Connectivity: The Closed Loop",
     subtitle: "Connect a real press — every stroke is judged, and sustained drift calibrates the shop",
@@ -124,7 +138,7 @@ def press_tonnage(force_kn, safety_factor):
     speakerNotes: "This is the differentiator. AutoForm simulates the die before it is cut; we also watch it run. The gateway only pushes data outbound to the API — the machine network is never exposed, and the machine token authorizes exactly one action: posting this press's strokes. Stress the contract: verdicts are advisory risk levels for human check. Nothing here approves a job, drives a press or stops it. If asked about the curve: the peak alone flags overload, but force still rising at bottom-dead-centre is the signature of a stripping problem nobody sees from a number. End on the loop: predict, watch it run, learn."
   },
   {
-    id: 8,
+    id: 9,
     layout: "bullets",
     title: "The CAD Already Knows the Bends",
     subtitle: "Read the bend table from the STEP model — confirm it, never trust it blind",
@@ -138,7 +152,7 @@ def press_tonnage(force_kn, safety_factor):
     speakerNotes: "This kills the main data-entry bottleneck: retyping geometry the CAD already has. Be precise about the honesty design — we read cylinders, not intent, so a fillet or a boss can look like a bend and the UI says so on the screen. The flats still come from the drawing because a solid doesn't know which edge the toolmaker measures from. Close with the printable trial sheet: prediction on one side, measurement grid on the other, the artefact the tool room actually holds."
   },
   {
-    id: 9,
+    id: 10,
     layout: "split-code",
     title: "Full-Stack Under the Hood",
     subtitle: "Next.js 16 + FastAPI, 153 backend tests, 7 Playwright e2e tests clicking the whole journey",
@@ -167,7 +181,21 @@ frontend/    Next.js 16 (App Router) + Tailwind CSS v4
     speakerNotes: "Zoom out to the engineering. The quality gates are real: 153 hand-calculated pytest cases, lint and type-check clean, and the e2e suite walks the whole user journey in a real browser, asserting the ADVISOR ENGINE: LIVE badge on load."
   },
   {
-    id: 10,
+    id: 11,
+    layout: "bullets",
+    title: "The Workshop Learns",
+    subtitle: "Analytics, an advisor that answers from your own rows, and the surfaces a tool room runs on",
+    content: [
+      "Shop analytics: risk mix across every job, defect Pareto across every trial, die-change outcomes, press streams — all computed from this workshop's rows",
+      "Ask the advisor: which jobs should I check first? Did the die change help? Deterministic answers from the shop's own data, and it says when a question is outside its range",
+      "Design revisions: a new drawing becomes v2 of the same part — inputs copied, linked to its parent, and the previous revision's checks, quotes and trial history untouched",
+      "Workspace settings: your material grades (owner-only CRUD, everything still starting as an unverified candidate), the calibration ledger with confirm/reject, and the audit trail with filters",
+      "CSV export of jobs, tryouts and the die-change ledger — spreadsheet-injection defended — plus multi-bend parts checked bend by bend, quote revisions priced side by side, and a printable die-trial sheet"
+    ],
+    speakerNotes: "Close the feature tour here before the summary. The through-line: every number on this screen is computed from the workshop's own rows, so the shop can verify all of it. The advisor is deliberately not a general chatbot — it answers from shop data and admits when a question is outside that, which is what keeps it trustworthy on the floor."
+  },
+  {
+    id: 12,
     layout: "summary",
     title: "Check the Die Before It Is Cut",
     subtitle: "Presented by Kishore Ravi & Sai Amogh D K • TryoutZero",

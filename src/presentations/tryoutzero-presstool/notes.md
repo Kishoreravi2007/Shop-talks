@@ -5,7 +5,7 @@
 - **Category**: AI & LLMs / Manufacturing
 - **Type**: Keynote
 - **Duration**: 45 mins
-- **Slides**: 10 slides
+- **Slides**: 12 slides
 - **Standalone Presentation**: [index.html](./index.html)
 
 ## Included Media Files
@@ -32,4 +32,6 @@ Small press tool rooms cut the die and then discover the problems during tryout 
 3. Edit the radius to 0.5 mm and re-run — verdict flips to **HIGH RISK** with the smallest fix, coupled thinning ~50%.
 4. Open **Press Machine Demo** — pick the demo press and watch the ram stall on an overloaded job.
 5. On the check screen, click **Bends from CAD** on a STEP job — radius and angle appear from the model, the toolmaker enters the flats and applies the table.
-6. Open **Machine Connectivity** — register a press, push a demo stroke, and watch the per-stroke verdict, the tonnage-curve sparkline and the drift window update live.
+6. On the tryout screen, record a trial then a die change; record the next trial and watch the change close out as resolved or no help.
+7. Open **Shop Analytics** and ask the advisor "which jobs should I check first?".
+8. Open **Machine Connectivity** — register a press, push a demo stroke, and watch the per-stroke verdict, the tonnage-curve sparkline and the drift window update live.
