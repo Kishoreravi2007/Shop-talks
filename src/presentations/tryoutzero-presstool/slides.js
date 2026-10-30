@@ -117,13 +117,28 @@ def press_tonnage(force_kn, safety_factor):
       "Register a press and mint a machine token — one click, owner-only, stored only as a hash and shown once",
       "A gateway beside the machine streams strokes over OPC-UA, Modbus TCP or MQTT — or the built-in simulator for the demo with no hardware",
       "Every stroke gets an advisory verdict: overload against the press rating, headroom against the 80% capacity parameter, drift against the reference force for the linked job",
+      "A stroke may also carry its tonnage curve (shrunk to 240 points server-side) — the peak says overload, the shape says stripping or bottoming trouble as force keeps climbing late in the stroke",
       "Drift is tracked against the rolling median of the last 20 strokes — the earliest signal of tool wear, dull edges or a lubrication change",
       "Sustained drift proposes a press safety-factor calibration for the shop to confirm — the same confirm-gated loop as the tryout screen, now fed by the machine itself"
     ],
-    speakerNotes: "This is the differentiator. AutoForm simulates the die before it is cut; we also watch it run. The gateway only pushes data outbound to the API — the machine network is never exposed, and the machine token authorizes exactly one action: posting this press's strokes. Stress the contract: verdicts are advisory risk levels for human check. Nothing here approves a job, drives a press or stops it. End on the loop: predict, watch it run, learn."
+    speakerNotes: "This is the differentiator. AutoForm simulates the die before it is cut; we also watch it run. The gateway only pushes data outbound to the API — the machine network is never exposed, and the machine token authorizes exactly one action: posting this press's strokes. Stress the contract: verdicts are advisory risk levels for human check. Nothing here approves a job, drives a press or stops it. If asked about the curve: the peak alone flags overload, but force still rising at bottom-dead-centre is the signature of a stripping problem nobody sees from a number. End on the loop: predict, watch it run, learn."
   },
   {
     id: 8,
+    layout: "bullets",
+    title: "The CAD Already Knows the Bends",
+    subtitle: "Read the bend table from the STEP model — confirm it, never trust it blind",
+    content: [
+      "A bent sheet carries its bends as cylindrical faces: the inner cylinder's radius is the bend radius, the arc sweep is the bend angle",
+      "POST /bends/from-cad reads those faces as candidates — holes, bosses and cosmetic rounds can appear too, so every candidate is flagged for the toolmaker to confirm",
+      "The flats are not in the model: the toolmaker enters each leg from the drawing, then applies the table and the checks re-run",
+      "The concentric cylinders of one bend (inner and outer surface) merge into a single candidate — the one the die is made to",
+      "B-spline bends, exotic exports and no-cylinder files return an honest 'no candidates' instead of a guess — plus a printable die-trial sheet to take to the press"
+    ],
+    speakerNotes: "This kills the main data-entry bottleneck: retyping geometry the CAD already has. Be precise about the honesty design — we read cylinders, not intent, so a fillet or a boss can look like a bend and the UI says so on the screen. The flats still come from the drawing because a solid doesn't know which edge the toolmaker measures from. Close with the printable trial sheet: prediction on one side, measurement grid on the other, the artefact the tool room actually holds."
+  },
+  {
+    id: 9,
     layout: "split-code",
     title: "Full-Stack Under the Hood",
     subtitle: "Next.js 16 + FastAPI, 153 backend tests, 7 Playwright e2e tests clicking the whole journey",
@@ -152,7 +167,7 @@ frontend/    Next.js 16 (App Router) + Tailwind CSS v4
     speakerNotes: "Zoom out to the engineering. The quality gates are real: 153 hand-calculated pytest cases, lint and type-check clean, and the e2e suite walks the whole user journey in a real browser, asserting the ADVISOR ENGINE: LIVE badge on load."
   },
   {
-    id: 9,
+    id: 10,
     layout: "summary",
     title: "Check the Die Before It Is Cut",
     subtitle: "Presented by Kishore Ravi & Sai Amogh D K • TryoutZero",

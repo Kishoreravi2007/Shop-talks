@@ -29,7 +29,7 @@ export const SPEAKER_PROFILE = {
   },
   stats: {
     talksCount: 3,
-    slidesDelivered: 27,
+    slidesDelivered: 29,
     videoDemos: 9,
     liveStatus: "Active"
   }

@@ -294,7 +294,7 @@
       </div>
       <div class="header-center">
         <div class="status-badge"><span class="status-dot"></span>ADVISOR ENGINE: LIVE</div>
-        <div class="slide-indicator" id="slideIndicator">01 / 09</div>
+        <div class="slide-indicator" id="slideIndicator">01 / 10</div>
       </div>
       <div class="header-actions">
         <button class="btn-icon" id="notesBtn" title="Toggle Presenter Notes (N)"><i class="fa-solid fa-book-open"></i></button>
@@ -650,7 +650,42 @@
         </div>
       </section>
 
-      <!-- 9. SUMMARY -->
+      <!-- 9. CAD BEND RECOGNITION -->
+      <section class="slide" data-notes="This kills the main data-entry bottleneck: retyping geometry the CAD already has. Be precise about the honesty design — we read cylinders, not intent, so a fillet or a boss can look like a bend and the UI says so on the screen. The flats still come from the drawing because a solid does not know which edge the toolmaker measures from. Close with the printable trial sheet: prediction on one side, measurement grid on the other, the artefact the tool room actually holds.">
+        <div class="slide-header">
+          <div class="slide-category"><i class="fa-solid fa-ruler-combined"></i> CAD bend recognition</div>
+          <h2 class="slide-title">The CAD Already Knows the Bends</h2>
+          <p class="slide-subtitle">Read candidates from the STEP model — confirm them, never trust them blind</p>
+        </div>
+        <div class="slide-body">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-magnifying-glass-chart"></i> What the model gives for free</div>
+            <ul class="bullet-list">
+              <li class="bullet-item"><i class="fa-solid fa-circle-half-stroke"></i><span>A bent sheet carries its bends as <b>cylindrical faces</b>: the inner cylinder&apos;s radius is the bend radius, the arc sweep is the bend angle.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-layer-group"></i><span>The concentric cylinders of one bend — inner and outer surface — <b>merge into a single candidate</b>: the one the die is made to.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-triangle-exclamation"></i><span>Candidates, not facts: <b>holes, bosses and cosmetic rounds can appear too</b>, so every one is flagged for the toolmaker to confirm.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-ruler"></i><span>The flats are not in the model — the toolmaker <b>enters each leg from the drawing</b>, then applies the table and the checks re-run.</span></li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-file-lines"></i> Prediction travels on paper</div>
+            <ul class="bullet-list">
+              <li class="bullet-item"><i class="fa-solid fa-print"></i><span>The <b>printable die-trial sheet</b> carries the predicted thinning, springback and flat blank — the numbers this engine computed before metal was cut.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-table-cells"></i><span>Against a <b>measurement grid</b> for the micrometer readings, a defect checklist, the die-change box and the signature line.</span></li>
+              <li class="bullet-item"><i class="fa-solid fa-rotate-left"></i><span>What was measured feeds the tryout screen afterwards — closing the same confirm-gated loop.</span></li>
+            </ul>
+            <div class="widget" style="margin-top:auto">
+              <div class="widget-title"><i class="fa-solid fa-hand-holding-medical"></i> Honest limits, stated</div>
+              <div style="font-size:0.86rem;line-height:1.6;color:var(--text-muted)">
+                B-spline bends, exotic STEP flavours and files with no cylinders return
+                <em>&ldquo;no candidates — enter the table by hand&rdquo;</em> instead of a guess.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. SUMMARY -->
       <section class="slide" data-notes="Conclude: TryoutZero is decision support, never a replacement for tryout. Every verdict is flagged for human check and every default stays pending mechanical-lead verification. Close on the arc: AutoForm simulates the die before it is cut — we do that too, and then we watch it run on the press and learn from every stroke. Invite questions and open the standalone live demo with the 3D press simulation.">
         <div class="summary">
           <h1>Check the Die <span>Before It Is Cut</span></h1>
@@ -659,6 +694,7 @@
             <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>Verdicts before metal is cut — low / medium / high risk with the exact rule, value and limit behind every call.</span></div>
             <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>Pure-function rules engine: F = L × t × τ blanking force and tonnage sizing — every parameter auditable.</span></div>
             <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>Real-time press simulation with a ram that stalls on overload; 2D tool path plus a 3D press from the shop's CAD.</span></div>
+            <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>The CAD already knows the bends: candidates read from the STEP model, confirmed by the toolmaker, printed onto the trial sheet for the press.</span></div>
             <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>The shop gets smarter with every die: confirmed correction factors apply to that workshop only.</span></div>
             <div class="takeaway"><i class="fa-solid fa-circle-check"></i><span>Machine connectivity: a press streams its strokes over OPC-UA, Modbus or MQTT — every stroke verdict-judged, sustained drift calibrated with owner confirmation.</span></div>
           </div>
@@ -670,7 +706,7 @@
         </div>
       </section>
 
-      <div class="slide-number" id="slideNumber">SLIDE 01 / 09</div>
+      <div class="slide-number" id="slideNumber">SLIDE 01 / 10</div>
       <div class="slide-watermark">SHOP-TALKS • TryoutZero ShopTalk 2026</div>
     </main>
 
@@ -734,7 +770,7 @@
     const slides = Array.from(document.querySelectorAll('.slide'));
     const thumbs = document.getElementById('thumbs');
     const drawerGrid = document.getElementById('drawerGrid');
-    const titles = ['Check the Die Before It Is Cut', 'The Die Tryout Problem', 'The TryoutZero Pipeline', 'A Rules Engine You Can Audit', 'The Verdict Flips in One Edit', 'Match the Job to the Machine', 'AI Vision & the Calibration Loop', 'The Closed Loop: The Press Talks Back', 'Check the Die Before It Is Cut'];
+    const titles = ['Check the Die Before It Is Cut', 'The Die Tryout Problem', 'The TryoutZero Pipeline', 'A Rules Engine You Can Audit', 'The Verdict Flips in One Edit', 'Match the Job to the Machine', 'AI Vision & the Calibration Loop', 'The Closed Loop: The Press Talks Back', 'The CAD Already Knows the Bends', 'Check the Die Before It Is Cut'];
     let cur = 0;
 
     slides.forEach((_, i) => {
